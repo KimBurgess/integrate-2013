@@ -305,11 +305,11 @@ DATA_EVENT[dvMonitoredDevice]
 {
   ONLINE:
   {
-	
+
   }
   OFFLINE:
   {
-	
+
   }
 }
 

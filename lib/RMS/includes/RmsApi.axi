@@ -127,9 +127,9 @@ RMS_EVENT_DISPLAY_MESSAGE             = 'MESSAGE.DISPLAY';
 RMS_EVENT_RFID_INITIALIZE             = 'RFID.INITIALIZE';
 
 
-// 
+//
 // RMS API Custom Event Addresses
-// 
+//
 RMS_CUSTOM_EVENT_ADDRESS_CLIENT           = 1;
 RMS_CUSTOM_EVENT_ADDRESS_LOCATION         = 2;
 RMS_CUSTOM_EVENT_ADDRESS_ASSET            = 3;
@@ -137,16 +137,16 @@ RMS_CUSTOM_EVENT_ADDRESS_DISPLAY_MESSAGE  = 4;
 RMS_CUSTOM_EVENT_ADDRESS_SERVICE_PROVIDER = 5;
 RMS_CUSTOM_EVENT_ADDRESS_EVENT_BOOKING    = 6;
 
-// 
+//
 // RMS API Custom Event IDs
-// 
+//
 RMS_CUSTOM_EVENT_CLIENT_INFORMATION       = 1;
 RMS_CUSTOM_EVENT_CLIENT_LOCATION_INFORMATION = 2;
 
-// location custom events 
+// location custom events
 RMS_CUSTOM_EVENT_LOCATION_INFORMATION     = 1;
 
-// asset custom events 
+// asset custom events
 RMS_CUSTOM_EVENT_ASSET_INFORMATION        = 1;
 RMS_CUSTOM_EVENT_ASSET_REGISTERED         = 2;
 RMS_CUSTOM_EVENT_ASSET_RELOCATED          = 3;
@@ -532,7 +532,7 @@ STRUCTURE RmsClientGateway
   INTEGER communicationProtocol
   INTEGER communicationProtocolVersion
 }
-   
+
 //
 // RMS Location Data Structure
 //
@@ -545,7 +545,7 @@ STRUCTURE RmsLocation
   CHAR prestigeName[100];
   CHAR owner[100];
   CHAR phoneNumber[50];
-  CHAR assetLicensed; 
+  CHAR assetLicensed;
 }
 
 
@@ -571,7 +571,7 @@ STRUCTURE RmsAssetControlMethod
 {
   CHAR assetClientKey[50];
   CHAR methodKey[50];
-  CHAR argumentValues[20][250];  // MAX 20 ARGUMENTS  
+  CHAR argumentValues[20][250];  // MAX 20 ARGUMENTS
 }
 
 

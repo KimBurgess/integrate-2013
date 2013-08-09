@@ -825,8 +825,8 @@ CUSTOM_EVENT[vdvRMS,
   STACK_VAR RmsLocation location;
   STACK_VAR LONG locationId;
   STACK_VAR CHAR isClientDefaultLocation;
-  
-  // the 'value1' member of the custom data event 
+
+  // the 'value1' member of the custom data event
   //  stores event the default client location state
   isClientDefaultLocation = TYPE_CAST(custom.value1);
 
@@ -857,16 +857,16 @@ CUSTOM_EVENT[vdvRMS,
   STACK_VAR CHAR isClientDefaultLocation;
   STACK_VAR CHAR assetClientKey[50];
   STACK_VAR LONG assetId;
-  
-  // the 'value1' member of the custom data event 
+
+  // the 'value1' member of the custom data event
   //  stores event the default client location state
   isClientDefaultLocation = TYPE_CAST(custom.value1);
 
-  // the 'value2' member of the custom data event 
+  // the 'value2' member of the custom data event
   //  stores event the asset id
   assetId = TYPE_CAST(custom.value2);
 
-  // the 'text' member of the custom data event 
+  // the 'text' member of the custom data event
   //  stores event the asset client key
   assetClientKey = custom.text;
 
@@ -895,8 +895,8 @@ CUSTOM_EVENT[vdvRMS,
 {
   STACK_VAR RmsDisplayMessage displayMessage;
   STACK_VAR CHAR isClientDefaultLocation;
-  
-  // the 'value1' member of the custom data event 
+
+  // the 'value1' member of the custom data event
   //  stores event the default client location state
   isClientDefaultLocation = TYPE_CAST(custom.value1);
 
@@ -926,7 +926,7 @@ CUSTOM_EVENT[vdvRMS,
   STACK_VAR RmsAssetControlMethod controlMethod;
   STACK_VAR LONG argumentCount;
 
-  // the 'value1' property of the custom data 
+  // the 'value1' property of the custom data
   //  event stores the number of method argument
   argumentCount = TYPE_CAST(custom.value1);
 

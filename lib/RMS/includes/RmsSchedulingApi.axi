@@ -133,7 +133,7 @@ RMS_EVENT_SCHEDULING_BOOKING_SUMMARIES_DAILY_RESPONSE     = 38;
 RMS_EVENT_SCHEDULING_BOOKING_SUMMARY_DAILY_RESPONSE       = 39;
 
 //
-// These are the codes which indicate the activity 
+// These are the codes which indicate the activity
 // which created an event response.
 //
 RMS_RESPONSE_TYPE_CREATE    = 0;
@@ -191,7 +191,7 @@ STRUCTURE RmsEventBookingResponse
     CHAR attendees[RMS_MAX_PARAM_LEN];            // Not used in some contexts such as adhoc creation
     CHAR isSuccessful;
     CHAR failureDescription[RMS_MAX_PARAM_LEN];   // Not used if result is from a successful event
-    
+
 }
 
 (***********************************************************)
@@ -458,10 +458,10 @@ DEFINE_FUNCTION CHAR RmsBookingNextActiveRequest(LONG locationId)
 (* Rtrn:  1 if call was successful                         *)
 (*        0 if call was unsuccessful                       *)
 (***********************************************************)
-DEFINE_FUNCTION CHAR RmsBookingCreate(CHAR startDate[], 
-                                        CHAR startTime[], 
-                                        INTEGER durationMinutes, 
-                                        CHAR subject[], 
+DEFINE_FUNCTION CHAR RmsBookingCreate(CHAR startDate[],
+                                        CHAR startTime[],
+                                        INTEGER durationMinutes,
+                                        CHAR subject[],
                                         CHAR messageBody[],
                                         LONG locationId)
 {
@@ -474,7 +474,7 @@ DEFINE_FUNCTION CHAR RmsBookingCreate(CHAR startDate[],
   rmsCommand = RmsPackCmdParam(rmsCommand,ITOA(durationMinutes));
   rmsCommand = RmsPackCmdParam(rmsCommand,subject);
   rmsCommand = RmsPackCmdParam(rmsCommand,messageBody);
-  
+
   if(locationId > 0)
   {
     rmsCommand = RmsPackCmdParam(rmsCommand,ITOA(locationId));
@@ -499,8 +499,8 @@ DEFINE_FUNCTION CHAR RmsBookingCreate(CHAR startDate[],
 (* Rtrn:  1 if call was successful                         *)
 (*        0 if call was unsuccessful                       *)
 (***********************************************************)
-DEFINE_FUNCTION CHAR RmsBookingExtend(CHAR bookingId[], 
-                                        LONG extendDurationMinutes, 
+DEFINE_FUNCTION CHAR RmsBookingExtend(CHAR bookingId[],
+                                        LONG extendDurationMinutes,
                                         LONG locationId)
 {
   STACK_VAR CHAR rmsCommand[RMS_MAX_CMD_LEN];
@@ -509,7 +509,7 @@ DEFINE_FUNCTION CHAR RmsBookingExtend(CHAR bookingId[],
   rmsCommand = RmsPackCmdHeader(RMS_COMMAND_SCHEDULING_BOOKING_EXTEND);
   rmsCommand = RmsPackCmdParam(rmsCommand,bookingId);
   rmsCommand = RmsPackCmdParam(rmsCommand,ITOA(extendDurationMinutes));
-  
+
   if(locationId > 0)
   {
     rmsCommand = RmsPackCmdParam(rmsCommand,ITOA(locationId));
@@ -533,7 +533,7 @@ DEFINE_FUNCTION CHAR RmsBookingExtend(CHAR bookingId[],
 (* Rtrn:  1 if call was successful                         *)
 (*        0 if call was unsuccessful                       *)
 (***********************************************************)
-DEFINE_FUNCTION CHAR RmsBookingEnd(CHAR bookingId[], 
+DEFINE_FUNCTION CHAR RmsBookingEnd(CHAR bookingId[],
                                         LONG locationId)
 {
   STACK_VAR CHAR rmsCommand[RMS_MAX_CMD_LEN];
@@ -541,7 +541,7 @@ DEFINE_FUNCTION CHAR RmsBookingEnd(CHAR bookingId[],
   // create send command
   rmsCommand = RmsPackCmdHeader(RMS_COMMAND_SCHEDULING_BOOKING_END);
   rmsCommand = RmsPackCmdParam(rmsCommand,bookingId);
-  
+
   if(locationId > 0)
   {
     rmsCommand = RmsPackCmdParam(rmsCommand,ITOA(locationId));
