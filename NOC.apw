@@ -130,6 +130,10 @@
 <UserName></UserName>
 <Password></Password>
 <Comments></Comments>
+<File CompileType="None" Type="Include"><Identifier>RmsGui</Identifier>
+<FilePathName>include\RmsGui.axi</FilePathName>
+<Comments></Comments>
+</File>
 <File CompileType="None" Type="Include"><Identifier>RmsApi</Identifier>
 <FilePathName>lib\RMS\includes\RmsApi.axi</FilePathName>
 <Comments></Comments>
@@ -150,6 +154,10 @@
 <FilePathName>lib\RMS\monitors\RmsControlSystemMonitor.axs</FilePathName>
 <Comments></Comments>
 </File>
+<File CompileType="None" Type="DUET"><Identifier>RmsClientGui_dr4_0_0</Identifier>
+<FilePathName>lib\RMS\RmsClientGui_dr4_0_0.jar</FilePathName>
+<Comments></Comments>
+</File>
 <File CompileType="None" Type="DUET"><Identifier>RmsNetLinxAdapter_dr4_0_0</Identifier>
 <FilePathName>lib\RMS\RmsNetLinxAdapter_dr4_0_0.jar</FilePathName>
 <Comments></Comments>
@@ -157,6 +165,12 @@
 <File CompileType="Netlinx" Type="MasterSrc"><Identifier>master</Identifier>
 <FilePathName>master.axs</FilePathName>
 <Comments></Comments>
+</File>
+<File CompileType="None" Type="TP4"><Identifier>boardroomScheduling</Identifier>
+<FilePathName>ui\boardroomScheduling.TP4</FilePathName>
+<Comments></Comments>
+<DeviceMap DevAddr="dvBoardroomSchedulingTp"><DevName>dvBoardroomSchedulingTp</DevName>
+</DeviceMap>
 </File>
 </System>
 </Project>
