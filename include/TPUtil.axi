@@ -74,13 +74,13 @@ define_function setButtonState(dev tp[], integer address, integer state) {
  * @param	w			the button width in pixels
  * @param	h			the button height in pixels
  */
-define_function setButtonRectangle(dev tp, 
+define_function setButtonRectangle(dev tp,
 		integer address,
 		integer x,
 		integer y,
 		integer w,
 		integer h) {
-	send_command tp, "'^BMF-', itoa(address), ',0,%R', itoa(x), ',', 
+	send_command tp, "'^BMF-', itoa(address), ',0,%R', itoa(x), ',',
 			itoa(y), ',', itoa(x + w), ',', itoa(y + h)"
 }
 

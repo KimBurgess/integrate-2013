@@ -134,6 +134,10 @@
 <FilePathName>include\RmsGui.axi</FilePathName>
 <Comments></Comments>
 </File>
+<File CompileType="None" Type="Include"><Identifier>TPUtil</Identifier>
+<FilePathName>include\TPUtil.axi</FilePathName>
+<Comments></Comments>
+</File>
 <File CompileType="None" Type="Include"><Identifier>RmsApi</Identifier>
 <FilePathName>lib\RMS\includes\RmsApi.axi</FilePathName>
 <Comments></Comments>
@@ -164,6 +168,10 @@
 </File>
 <File CompileType="Netlinx" Type="MasterSrc"><Identifier>master</Identifier>
 <FilePathName>master.axs</FilePathName>
+<Comments></Comments>
+</File>
+<File CompileType="Netlinx" Type="Module"><Identifier>RmsClientGuiAux</Identifier>
+<FilePathName>module\RmsClientGuiAux.axs</FilePathName>
 <Comments></Comments>
 </File>
 <File CompileType="None" Type="TP4"><Identifier>boardroomScheduling</Identifier>

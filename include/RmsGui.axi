@@ -22,3 +22,5 @@ volatile dev rmsTpBase[] = {
 
 
 define_module 'RmsClientGui_dr4_0_0' mdlRmsGui(vdvRmsGui, rmsTp, rmsTpBase)
+
+define_module 'RmsClientGuiAux' mdlRmsGuiBoardroomAux(vdvRMS, dvBoardroomSchedulingTpRmsAux, dvBoardroomSchedulingTp)
