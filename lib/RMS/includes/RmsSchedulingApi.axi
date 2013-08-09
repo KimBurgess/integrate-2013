@@ -237,9 +237,7 @@ STRUCTURE RmsEventBookingDailyCount
     INTEGER recordCount;
     INTEGER recordNumber;
  }
-
-// include RMS Scheduling API
-#INCLUDE 'RmsSchedulingEventListener';
+ 
 
 (***********************************************************)
 (* Name:  RmsBookingsRequest                               *)
