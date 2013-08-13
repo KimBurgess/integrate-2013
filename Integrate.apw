@@ -130,12 +130,20 @@
 <UserName></UserName>
 <Password></Password>
 <Comments></Comments>
-<File CompileType="None" Type="Include"><Identifier>RmsGui</Identifier>
-<FilePathName>include\RmsGui.axi</FilePathName>
+<File CompileType="None" Type="Include"><Identifier>Devices</Identifier>
+<FilePathName>include\Devices.axi</FilePathName>
+<Comments></Comments>
+</File>
+<File CompileType="None" Type="Include"><Identifier>TimeUtil</Identifier>
+<FilePathName>include\TimeUtil.axi</FilePathName>
 <Comments></Comments>
 </File>
 <File CompileType="None" Type="Include"><Identifier>TPUtil</Identifier>
 <FilePathName>include\TPUtil.axi</FilePathName>
+<Comments></Comments>
+</File>
+<File CompileType="None" Type="Include"><Identifier>UI</Identifier>
+<FilePathName>include\UI.axi</FilePathName>
 <Comments></Comments>
 </File>
 <File CompileType="None" Type="Include"><Identifier>RmsApi</Identifier>
@@ -144,6 +152,10 @@
 </File>
 <File CompileType="None" Type="Include"><Identifier>RmsEventListener</Identifier>
 <FilePathName>lib\RMS\includes\RmsEventListener.axi</FilePathName>
+<Comments></Comments>
+</File>
+<File CompileType="None" Type="Include"><Identifier>RmsGuiApi</Identifier>
+<FilePathName>lib\RMS\includes\RmsGuiApi.axi</FilePathName>
 <Comments></Comments>
 </File>
 <File CompileType="None" Type="Include"><Identifier>RmsSchedulingApi</Identifier>
@@ -156,6 +168,10 @@
 </File>
 <File CompileType="Netlinx" Type="Module"><Identifier>RmsControlSystemMonitor</Identifier>
 <FilePathName>lib\RMS\monitors\RmsControlSystemMonitor.axs</FilePathName>
+<Comments></Comments>
+</File>
+<File CompileType="Netlinx" Type="Module"><Identifier>RmsTouchPanelMonitor</Identifier>
+<FilePathName>lib\RMS\monitors\RmsTouchPanelMonitor.axs</FilePathName>
 <Comments></Comments>
 </File>
 <File CompileType="None" Type="DUET"><Identifier>RmsClientGui_dr4_0_0</Identifier>
