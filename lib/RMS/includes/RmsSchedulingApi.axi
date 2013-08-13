@@ -237,7 +237,7 @@ STRUCTURE RmsEventBookingDailyCount
     INTEGER recordCount;
     INTEGER recordNumber;
  }
- 
+
 
 (***********************************************************)
 (* Name:  RmsBookingsRequest                               *)

@@ -63,8 +63,8 @@ PROGRAM_NAME='RmsGuiApi'
 (***********************************************************)
 DEFINE_CONSTANT
 
-RMS_GUI_SET_INTERNAL_COMMAND_HEADER = 'SET_INTERNAL_PANEL-'; 
-RMS_GUI_SET_EXTERNAL_COMMAND_HEADER = 'SET_EXTERNAL_PANEL-'; 
+RMS_GUI_SET_INTERNAL_COMMAND_HEADER = 'SET_INTERNAL_PANEL-';
+RMS_GUI_SET_EXTERNAL_COMMAND_HEADER = 'SET_EXTERNAL_PANEL-';
 RMS_GUI_SET_DEFAULT_EVENT_BOOKING_SUBJECT_COMMAND_HEADER = 'SET_DEFAULT_EVENT_BOOKING_SUBJECT';
 RMS_GUI_SET_DEFAULT_EVENT_BOOKING_BODY_COMMAND_HEADER = 'SET_DEFAULT_EVENT_BOOKING_BODY';
 RMS_GUI_ENABLE_LED_SUPPORT_COMMAND_HEADER = 'ENABLE_LED_SUPPORT';
@@ -101,7 +101,7 @@ DEFINE_FUNCTION CHAR RmsSetInternalPanel(DEV baseTouchPanelDps, DEV rmsTouchPane
     rmsCommand = RmsPackCmdParam(rmsCommand,RmsDevToString(baseTouchPanelDPS));
     rmsCommand = RmsPackCmdParam(rmsCommand,RmsDevToString(rmsTouchPanelDps));
     SEND_COMMAND vdvRMSGui, rmsCommand;
-    
+
     RETURN TRUE;
 }
 
@@ -123,7 +123,7 @@ DEFINE_FUNCTION CHAR RmsSetExternalPanel(DEV baseTouchPanelDps, DEV rmsTouchPane
     rmsCommand = RmsPackCmdParam(rmsCommand,RmsDevToString(baseTouchPanelDPS));
     rmsCommand = RmsPackCmdParam(rmsCommand,RmsDevToString(rmsTouchPanelDps));
     SEND_COMMAND vdvRMSGui, rmsCommand;
-    
+
     RETURN TRUE;
 }
 
@@ -143,7 +143,7 @@ DEFINE_FUNCTION CHAR RmsSetDefaultEventBookingSubject(CHAR subject[RMS_MAX_PARAM
     rmsCommand = RmsPackCmdHeader(RMS_GUI_SET_DEFAULT_EVENT_BOOKING_SUBJECT_COMMAND_HEADER);
     rmsCommand = RmsPackCmdParam(rmsCommand,subject);
     SEND_COMMAND vdvRMSGui, rmsCommand;
-    
+
     RETURN TRUE;
 }
 
@@ -163,7 +163,7 @@ DEFINE_FUNCTION CHAR RmsSetDefaultEventBookingBody(CHAR body[RMS_MAX_PARAM_LEN])
     rmsCommand = RmsPackCmdHeader(RMS_GUI_SET_DEFAULT_EVENT_BOOKING_BODY_COMMAND_HEADER);
     rmsCommand = RmsPackCmdParam(rmsCommand,body);
     SEND_COMMAND vdvRMSGui, rmsCommand;
-    
+
     RETURN TRUE;
 }
 
@@ -183,7 +183,7 @@ DEFINE_FUNCTION CHAR RmsEnableLedSupport(CHAR enableLedSupport)
     rmsCommand = RmsPackCmdHeader(RMS_GUI_ENABLE_LED_SUPPORT_COMMAND_HEADER);
     rmsCommand = RmsPackCmdParam(rmsCommand,RmsBooleanString(enableLedSupport));
     SEND_COMMAND vdvRMSGui, rmsCommand;
-    
+
     RETURN TRUE;
 }
 
