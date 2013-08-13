@@ -8,6 +8,8 @@ MODULE_NAME='RmsClientGuiAux'(dev vdvRMS, dev dvTp, dev dvTpBase, integer initia
 #DEFINE INCLUDE_RMS_EVENT_ASSET_REGISTERED_CALLBACK
 #DEFINE INCLUDE_RMS_EVENT_ASSET_RELOCATED_CALLBACK
 #DEFINE INCLUDE_RMS_EVENT_ASSET_LOCATION_CALLBACK
+#DEFINE INCLUDE_SCHEDULING_EVENT_ENDED_CALLBACK
+#DEFINE INCLUDE_SCHEDULING_EVENT_STARTED_CALLBACK
 
 
 #INCLUDE 'TPUtil'
@@ -33,6 +35,9 @@ constant integer CURRENT_MEETING_END_TIME_VIEW_ADDRESS = 14;
 constant integer CURRENT_MEETING_TIME_REMAINING_VIEW_ADDRESS = 15;
 constant integer CURRENT_MEETING_DETAILS_VIEW_ADDREss = 16;
 
+constant char ACTIVE_MEETING_INFO[] = '_rmsActiveMeetingInfo';
+constant char NEXT_MEETING_INFO[] = '_rmsNextMeetingInfo';
+
 volatile char tpClientKey[50];
 volatile long locationId = 0;
 
@@ -42,7 +47,7 @@ volatile long locationId = 0;
  * Initialise module variables that can be assisgned at compile time.
  */
 define_function init() {
-	tpClientKey = RmsDevToString(dvTp);
+	tpClientKey = RmsDevToString(dvTpBase);
 }
 
 /**
@@ -77,6 +82,14 @@ define_function updateCurrentMeetingDetails(RmsEventBookingResponse booking) {
 	setButtonText(dvTp, CURRENT_MEETING_DETAILS_VIEW_ADDREss, booking.details);
 }
 
+define_function setAvailable(char isAvailable) {
+	if (isAvailable) {
+		showPopup(dvTp, NEXT_MEETING_INFO);
+	} else {
+		showPopup(dvTp, ACTIVE_MEETING_INFO);
+	}
+}
+
 
 // RMS callbacks
 
@@ -85,7 +98,9 @@ define_function RmsEventSchedulingNextActiveResponse(char isDefaultLocation,
 		integer recordCount,
 		char bookingId[],
 		RmsEventBookingResponse eventBookingResponse) {
-	updateNextMeetingDetails(eventBookingResponse);
+	if (eventBookingResponse.location == locationId) {
+		updateNextMeetingDetails(eventBookingResponse);
+	}
 }
 
 define_function RmsEventSchedulingActiveResponse(char isDefaultLocation,
@@ -93,17 +108,37 @@ define_function RmsEventSchedulingActiveResponse(char isDefaultLocation,
 		integer recordCount,
 		char bookingId[],
 		RmsEventBookingResponse eventBookingResponse) {
-	updateCurrentMeetingDetails(eventBookingResponse);
+	if (eventBookingResponse.location == locationId) {
+		updateCurrentMeetingDetails(eventBookingResponse);
+	}
 }
 
 define_function RmsEventSchedulingNextActiveUpdated(char bookingId[],
 		RmsEventBookingResponse eventBookingResponse) {
-	updateNextMeetingDetails(eventBookingResponse);
+	if (eventBookingResponse.location == locationId) {
+		updateNextMeetingDetails(eventBookingResponse);
+	}
 }
 
 define_function RmsEventSchedulingActiveUpdated(char bookingId[],
 		RmsEventBookingResponse eventBookingResponse) {
-	updateCurrentMeetingDetails(eventBookingResponse);
+	if (eventBookingResponse.location == locationId) {
+		updateCurrentMeetingDetails(eventBookingResponse);
+	}
+}
+
+define_function RmsEventSchedulingEventEnded(CHAR bookingId[],
+		RmsEventBookingResponse eventBookingResponse) {
+	if (eventBookingResponse.location == locationId) {
+		setAvailable(true);
+	}
+}
+
+define_function RmsEventSchedulingEventStarted(CHAR bookingId[],
+		RmsEventBookingResponse eventBookingResponse) {
+	if (eventBookingResponse.location == locationId) {
+		setAvailable(false);
+	}
 }
 
 define_function RmsEventAssetRegistered(char registeredAssetClientKey[],
