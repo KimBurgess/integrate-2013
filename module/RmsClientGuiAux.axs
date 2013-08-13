@@ -56,6 +56,8 @@ define_function updateNextMeetingDetails(RmsEventBookingResponse booking) {
 	setButtonText(dvTp, NEXT_MEETING_ORGANISER_VIEW_ADDRESS, booking.organizer);
 	setButtonText(dvTp, NEXT_MEETING_START_TIME_VIEW_ADDRESS, booking.startTime);
 	setButtonText(dvTp, NEXT_MEETING_END_TIME_VIEW_ADDRESS, booking.endTime);
+	setButtonText(dvTp, NEXT_MEETING_TIME_UNTIL_START_VIEW_ADDRESS,
+			"'Starts ', fuzzyTime(booking.minutesUntilStart)");
 	setButtonText(dvTp, NEXT_MEETING_DETAILS_VIEW_ADDREss, booking.details);
 }
 
@@ -70,6 +72,8 @@ define_function updateCurrentMeetingDetails(RmsEventBookingResponse booking) {
 	setButtonText(dvTp, CURRENT_MEETING_ORGANISER_VIEW_ADDRESS, booking.organizer);
 	setButtonText(dvTp, CURRENT_MEETING_START_TIME_VIEW_ADDRESS, booking.startTime);
 	setButtonText(dvTp, CURRENT_MEETING_END_TIME_VIEW_ADDRESS, booking.endTime);
+	setButtonText(dvTp, NEXT_MEETING_TIME_UNTIL_START_VIEW_ADDRESS,
+			"'Ends ', fuzzyTime(booking.remainingMinutes)");
 	setButtonText(dvTp, CURRENT_MEETING_DETAILS_VIEW_ADDREss, booking.details);
 }
 
