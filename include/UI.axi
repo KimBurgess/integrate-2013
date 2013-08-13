@@ -39,7 +39,7 @@ data_event[vdvRmsGui] {
 
 		RmsSetDefaultEventBookingSubject('Ad-hoc booking');
 
-		RmsSetDefaultEventBookingBody('');
+		RmsSetDefaultEventBookingBody(' ');
 	}
 
 }
