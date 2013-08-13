@@ -134,6 +134,18 @@
 <FilePathName>include\Devices.axi</FilePathName>
 <Comments></Comments>
 </File>
+<File CompileType="None" Type="Include"><Identifier>RmsApiAux</Identifier>
+<FilePathName>include\RmsApiAux.axi</FilePathName>
+<Comments></Comments>
+</File>
+<File CompileType="None" Type="Include"><Identifier>RmsCore</Identifier>
+<FilePathName>include\RmsCore.axi</FilePathName>
+<Comments></Comments>
+</File>
+<File CompileType="None" Type="Include"><Identifier>RmsEventListenerAux</Identifier>
+<FilePathName>include\RmsEventListenerAux.axi</FilePathName>
+<Comments></Comments>
+</File>
 <File CompileType="None" Type="Include"><Identifier>TimeUtil</Identifier>
 <FilePathName>include\TimeUtil.axi</FilePathName>
 <Comments></Comments>
