@@ -38,6 +38,8 @@ constant integer CURRENT_MEETING_DETAILS_VIEW_ADDREss = 16;
 constant char ACTIVE_MEETING_INFO[] = '_rmsActiveMeetingInfo';
 constant char NEXT_MEETING_INFO[] = '_rmsNextMeetingInfo';
 
+constant long TL_BOOKING_INFO_POLL = 1;
+
 volatile char tpClientKey[50];
 volatile long locationId = 0;
 
@@ -48,6 +50,12 @@ volatile long locationId = 0;
  */
 define_function init() {
 	tpClientKey = RmsDevToString(dvTpBase);
+
+	if (!timeline_active(TL_BOOKING_INFO_POLL)) {
+		stack_var long interval[1];
+		interval[1] = 6000;	// once per minute
+		timeline_create(TL_BOOKING_INFO_POLL, interval, 1, TIMELINE_RELATIVE, TIMELINE_REPEAT);
+	}
 }
 
 /**
@@ -77,16 +85,31 @@ define_function updateCurrentMeetingDetails(RmsEventBookingResponse booking) {
 	setButtonText(dvTp, CURRENT_MEETING_ORGANISER_VIEW_ADDRESS, booking.organizer);
 	setButtonText(dvTp, CURRENT_MEETING_START_TIME_VIEW_ADDRESS, booking.startTime);
 	setButtonText(dvTp, CURRENT_MEETING_END_TIME_VIEW_ADDRESS, booking.endTime);
-	setButtonText(dvTp, NEXT_MEETING_TIME_UNTIL_START_VIEW_ADDRESS,
+	setButtonText(dvTp, CURRENT_MEETING_TIME_REMAINING_VIEW_ADDRESS,
 			"'Ends ', fuzzyTime(booking.remainingMinutes)");
 	setButtonText(dvTp, CURRENT_MEETING_DETAILS_VIEW_ADDREss, booking.details);
 }
 
+/**
+ * Sets the room available state on the UI.
+ *
+ * @param	isAvailable		a boolean, true if the room should show as available
+ */
 define_function setAvailable(char isAvailable) {
 	if (isAvailable) {
 		showPopup(dvTp, NEXT_MEETING_INFO);
 	} else {
 		showPopup(dvTp, ACTIVE_MEETING_INFO);
+	}
+}
+
+/**
+ * Queries the meeting info for the location this module is handling.
+ */
+define_function queryMeetingInfo() {
+	if (locationId > 0) {
+		RmsBookingActiveRequest(locationId);
+		RmsBookingNextActiveRequest(locationId);
 	}
 }
 
@@ -162,7 +185,14 @@ define_function RmsEventAssetLocation(char assetClientKey[], RmsLocation locatio
 		locationId = location.id;
 	}*/
 	#WARN 'As we cannot currently associate an ?ASSET.LOCATION response with a device this is a hard coded hack'
-	locationId = initialLocation
+	locationId = initialLocation;
+}
+
+
+define_event
+
+timeline_event[TL_BOOKING_INFO_POLL] {
+	queryMeetingInfo();
 }
 
 
