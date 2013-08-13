@@ -65,7 +65,7 @@ define_function setButtonState(dev tp[], integer address, integer state) {
 }
 
 /**
- * Set the button positoin and size.
+ * Set the button position and size.
  *
  * @param	tp			the device containing the button
  * @param	address		the button address
