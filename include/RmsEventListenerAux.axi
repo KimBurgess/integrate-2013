@@ -37,7 +37,8 @@ data_event[vdvRMS] {
 				stack_var char assetClientKey[RMS_MAX_PARAM_LEN];
 				stack_var RmsLocation location;
 
-				assetClientKey = RmsParseCmdParam(data.text);
+				#WARN 'The actual API deviates from the docs here as of v4.1.13'
+				//assetClientKey = RmsParseCmdParam(data.text);
 
 				location.id = atoi(RmsParseCmdParam(data.text));
 				location.name = RmsParseCmdParam(data.text);
