@@ -20,10 +20,12 @@ volatile dev rmsTpBase[] = {
 	dvBoardroomSchedulingTp
 };
 
+volatile integer rmsLocationBoardroom = 29;
+
 
 define_module 'RmsClientGui_dr4_0_0' mdlRmsGui(vdvRmsGui, rmsTp, rmsTpBase);
 
-define_module 'RmsClientGuiAux' mdlRmsGuiBoardroomAux(vdvRMS, dvBoardroomSchedulingTpRmsAux, dvBoardroomSchedulingTp);
+define_module 'RmsClientGuiAux' mdlRmsGuiBoardroomAux(vdvRMS, dvBoardroomSchedulingTpRmsAux, dvBoardroomSchedulingTp, rmsLocationBoardroom);
 
 
 define_event

@@ -1,16 +1,21 @@
-MODULE_NAME='RmsClientGuiAux'(dev vdvRMS, dev dvTp, dev dvTpBase)
+MODULE_NAME='RmsClientGuiAux'(dev vdvRMS, dev dvTp, dev dvTpBase, integer initialLocation)
 
 
 #DEFINE INCLUDE_SCHEDULING_NEXT_ACTIVE_RESPONSE_CALLBACK
 #DEFINE INCLUDE_SCHEDULING_ACTIVE_RESPONSE_CALLBACK
 #DEFINE INCLUDE_SCHEDULING_NEXT_ACTIVE_UPDATED_CALLBACK
 #DEFINE INCLUDE_SCHEDULING_ACTIVE_UPDATED_CALLBACK
+#DEFINE INCLUDE_RMS_EVENT_ASSET_REGISTERED_CALLBACK
+#DEFINE INCLUDE_RMS_EVENT_ASSET_RELOCATED_CALLBACK
+#DEFINE INCLUDE_RMS_EVENT_ASSET_LOCATION_CALLBACK
 
 
 #INCLUDE 'TPUtil'
 #INCLUDE 'TimeUtil'
+#INCLUDE 'RmsEventListener'
 #INCLUDE 'RmsSchedulingApi'
 #INCLUDE 'RmsSchedulingEventListener'
+#INCLUDE 'RmsEventListenerAux'
 
 
 define_variable
@@ -28,9 +33,17 @@ constant integer CURRENT_MEETING_END_TIME_VIEW_ADDRESS = 14;
 constant integer CURRENT_MEETING_TIME_REMAINING_VIEW_ADDRESS = 15;
 constant integer CURRENT_MEETING_DETAILS_VIEW_ADDREss = 16;
 
+volatile char tpClientKey[50];
+volatile long locationId = 0;
 
-volatile integer locationID = 0;
 
+
+/**
+ * Initialise module variables that can be assisgned at compile time.
+ */
+define_function init() {
+	tpClientKey = RmsDevToString(dvTp);
+}
 
 /**
  * Updates the 'next meeting' info on the touch panel.
@@ -39,11 +52,11 @@ volatile integer locationID = 0;
  *							data.
  */
 define_function updateNextMeetingDetails(RmsEventBookingResponse booking) {
-	setButtonText(dvTP, NEXT_MEETING_SUBJECT_VIEW_ADDRESS, booking.subject);
-	setButtonText(dvTP, NEXT_MEETING_ORGANISER_VIEW_ADDRESS, booking.organizer);
-	setButtonText(dvTP, NEXT_MEETING_START_TIME_VIEW_ADDRESS, booking.startTime);
-	setButtonText(dvTP, NEXT_MEETING_END_TIME_VIEW_ADDRESS, booking.endTime);
-	setButtonText(dvTP, NEXT_MEETING_DETAILS_VIEW_ADDREss, booking.details);
+	setButtonText(dvTp, NEXT_MEETING_SUBJECT_VIEW_ADDRESS, booking.subject);
+	setButtonText(dvTp, NEXT_MEETING_ORGANISER_VIEW_ADDRESS, booking.organizer);
+	setButtonText(dvTp, NEXT_MEETING_START_TIME_VIEW_ADDRESS, booking.startTime);
+	setButtonText(dvTp, NEXT_MEETING_END_TIME_VIEW_ADDRESS, booking.endTime);
+	setButtonText(dvTp, NEXT_MEETING_DETAILS_VIEW_ADDREss, booking.details);
 }
 
 /**
@@ -53,11 +66,11 @@ define_function updateNextMeetingDetails(RmsEventBookingResponse booking) {
  *							data.
  */
 define_function updateCurrentMeetingDetails(RmsEventBookingResponse booking) {
-	setButtonText(dvTP, CURRENT_MEETING_SUBJECT_VIEW_ADDRESS, booking.subject);
-	setButtonText(dvTP, CURRENT_MEETING_ORGANISER_VIEW_ADDRESS, booking.organizer);
-	setButtonText(dvTP, CURRENT_MEETING_START_TIME_VIEW_ADDRESS, booking.startTime);
-	setButtonText(dvTP, CURRENT_MEETING_END_TIME_VIEW_ADDRESS, booking.endTime);
-	setButtonText(dvTP, CURRENT_MEETING_DETAILS_VIEW_ADDREss, booking.details);
+	setButtonText(dvTp, CURRENT_MEETING_SUBJECT_VIEW_ADDRESS, booking.subject);
+	setButtonText(dvTp, CURRENT_MEETING_ORGANISER_VIEW_ADDRESS, booking.organizer);
+	setButtonText(dvTp, CURRENT_MEETING_START_TIME_VIEW_ADDRESS, booking.startTime);
+	setButtonText(dvTp, CURRENT_MEETING_END_TIME_VIEW_ADDRESS, booking.endTime);
+	setButtonText(dvTp, CURRENT_MEETING_DETAILS_VIEW_ADDREss, booking.details);
 }
 
 
@@ -89,7 +102,31 @@ define_function RmsEventSchedulingActiveUpdated(char bookingId[],
 	updateCurrentMeetingDetails(eventBookingResponse);
 }
 
+define_function RmsEventAssetRegistered(char registeredAssetClientKey[],
+		long assetId,
+		char newAssetRegistration) {
+	if (registeredAssetClientKey == tpClientKey) {
+		RmsAssetLocationRequest(tpClientKey)
+	}
+}
 
-// TODO listen for RMS coonect / device register / location change
+define_function RmsEventAssetRelocated(char assetClientKey[],
+		long assetId, 
+		long newLocationId) {
+	if (assetClientKey == tpClientKey) {
+		locationId = newLocationId;
+	}
+}
 
-// TODO query with RmsBookingNextActiveRequest and locationId in timeline
+define_function RmsEventAssetLocation(char assetClientKey[], RmsLocation location) {
+	/*if (assetClientKey == tpClientKey) {
+		locationId = location.id;
+	}*/
+	#WARN 'As we cannot currently associate an ?ASSET.LOCATION response with a device this is a hard coded hack'
+	locationId = initialLocation
+}
+
+
+define_start
+
+init();
