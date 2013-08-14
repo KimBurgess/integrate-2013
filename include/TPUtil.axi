@@ -15,6 +15,16 @@ define_function showPopup(dev tp, char name[]) {
 }
 
 /**
+ * Hides a popup page.
+ *
+ * @param	tp			the device to hide the popup page on
+ * @param	name		the name of the popup page to hide
+ */
+define_function hidePopup(dev tp, char name[]) {
+	send_command tp, "'@PPF-', name"
+}
+
+/**
  * Sets the currently displayed page on a touch panel.
  *
  * @param	tp			the device to set the page of

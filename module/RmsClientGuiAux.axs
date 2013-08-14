@@ -18,6 +18,7 @@ MODULE_NAME='RmsClientGuiAux'(dev vdvRMS, dev dvTp, dev dvTpBase, integer initia
 #INCLUDE 'RmsSchedulingApi'
 #INCLUDE 'RmsSchedulingEventListener'
 #INCLUDE 'RmsEventListenerAux'
+#INCLUDE 'User'
 
 
 define_variable
@@ -27,19 +28,27 @@ constant integer NEXT_MEETING_ORGANISER_VIEW_ADDRESS = 2;
 constant integer NEXT_MEETING_TIME_VIEW_ADDRESS = 3;
 constant integer NEXT_MEETING_TIME_UNTIL_START_VIEW_ADDRESS = 4;
 constant integer NEXT_MEETING_DETAILS_VIEW_ADDREss = 5;
-constant integer CURRENT_MEETING_SUBJECT_VIEW_ADDRESS = 11;
-constant integer CURRENT_MEETING_ORGANISER_VIEW_ADDRESS = 12;
-constant integer CURRENT_MEETING_TIME_VIEW_ADDRESS = 13;
-constant integer CURRENT_MEETING_TIME_REMAINING_VIEW_ADDRESS = 14;
-constant integer CURRENT_MEETING_DETAILS_VIEW_ADDREss = 15;
+constant integer ACTIVE_MEETING_SUBJECT_VIEW_ADDRESS = 11;
+constant integer ACTIVE_MEETING_ORGANISER_VIEW_ADDRESS = 12;
+constant integer ACTIVE_MEETING_TIME_VIEW_ADDRESS = 13;
+constant integer ACTIVE_MEETING_TIME_REMAINING_VIEW_ADDRESS = 14;
+constant integer ACTIVE_MEETING_DETAILS_VIEW_ADDREss = 15;
 
-constant char ACTIVE_MEETING_INFO[] = '_rmsActiveMeetingInfo';
-constant char NEXT_MEETING_INFO[] = '_rmsNextMeetingInfo';
+constant char ACTIVE_MEETING_INFO_VIEW_NAME[] = '_rmsActiveMeetingInfo';
+constant char NEXT_MEETING_INFO_VIEW_NAME[] = '_rmsNextMeetingInfo';
+constant char IN_USE_INDICATOR_VIEW_NAME[] = '_rmsInUseIndicator';
+constant char AVAILABILITY_GUIDE_VIEW_NAME[] = '_rmsAvailabilityGuide';
+constant char CALENDAR_VIEW_NAME[] = '_rmsCalendar';
+constant char NFC_TOUCH_ON_VIEW_NAME[] = 'nfcTouchOn';
 
 constant long TL_BOOKING_INFO_POLL = 1;
 
 volatile char tpClientKey[50];
 volatile long locationId = 0;
+
+volatile char locationIsAvailable;
+
+volatile userData activeUser
 
 
 
@@ -48,6 +57,41 @@ volatile long locationId = 0;
  */
 define_function init() {
 	tpClientKey = RmsDevToString(dvTpBase);
+}
+
+/**
+ * Render the appropriate popups and page elements for the current system state.
+ */
+define_function render() {
+	select {
+	
+		active (userIsNull(activeUser) && locationIsAvailable): {
+			hidePopup(dvTp, CALENDAR_VIEW_NAME);
+			showPopup(dvTp, IN_USE_INDICATOR_VIEW_NAME);
+			showPopup(dvTp, NEXT_MEETING_INFO_VIEW_NAME);
+			showPopup(dvTp, AVAILABILITY_GUIDE_VIEW_NAME);
+			showPopup(dvTp, NFC_TOUCH_ON_VIEW_NAME);
+		}
+		
+		active (userIsNull(activeUser) && !locationIsAvailable): {
+			hidePopup(dvTp, CALENDAR_VIEW_NAME);
+			showPopup(dvTp, IN_USE_INDICATOR_VIEW_NAME);
+			showPopup(dvTp, ACTIVE_MEETING_INFO_VIEW_NAME);
+			showPopup(dvTp, AVAILABILITY_GUIDE_VIEW_NAME);
+			showPopup(dvTp, NFC_TOUCH_ON_VIEW_NAME);
+		}
+		
+		active (1): {
+			hidePopup(dvTp, IN_USE_INDICATOR_VIEW_NAME);
+			hidePopup(dvTp, ACTIVE_MEETING_INFO_VIEW_NAME);
+			hidePopup(dvTp, NFC_TOUCH_ON_VIEW_NAME);
+			showPopup(dvTp, CALENDAR_VIEW_NAME);
+			showPopup(dvTp, AVAILABILITY_GUIDE_VIEW_NAME);
+			// TODO show user image
+			// TODO show user welcome
+		}
+	
+	}
 }
 
 /**
@@ -72,27 +116,24 @@ define_function updateNextMeetingDetails(RmsEventBookingResponse booking) {
  * @param		booking		an RmsEventBookingResponse containing the booking
  *							data.
  */
-define_function updateCurrentMeetingDetails(RmsEventBookingResponse booking) {
-	setButtonText(dvTp, CURRENT_MEETING_SUBJECT_VIEW_ADDRESS, booking.subject);
-	setButtonText(dvTp, CURRENT_MEETING_ORGANISER_VIEW_ADDRESS, booking.organizer);
-	setButtonText(dvTp, CURRENT_MEETING_TIME_VIEW_ADDRESS,
+define_function updateActiveMeetingDetails(RmsEventBookingResponse booking) {
+	setButtonText(dvTp, ACTIVE_MEETING_SUBJECT_VIEW_ADDRESS, booking.subject);
+	setButtonText(dvTp, ACTIVE_MEETING_ORGANISER_VIEW_ADDRESS, booking.organizer);
+	setButtonText(dvTp, ACTIVE_MEETING_TIME_VIEW_ADDRESS,
 			"time12Hour(booking.startTime), ' - ', time12Hour(booking.endTime)");
-	setButtonText(dvTp, CURRENT_MEETING_TIME_REMAINING_VIEW_ADDRESS,
+	setButtonText(dvTp, ACTIVE_MEETING_TIME_REMAINING_VIEW_ADDRESS,
 			"'Ends ', fuzzyTime(booking.remainingMinutes)");
-	setButtonText(dvTp, CURRENT_MEETING_DETAILS_VIEW_ADDREss, booking.details);
+	setButtonText(dvTp, ACTIVE_MEETING_DETAILS_VIEW_ADDREss, booking.details);
 }
 
 /**
- * Sets the room available state on the UI.
+ * Sets the room available state.
  *
  * @param	isAvailable		a boolean, true if the room should show as available
  */
 define_function setAvailable(char isAvailable) {
-	if (isAvailable) {
-		showPopup(dvTp, NEXT_MEETING_INFO);
-	} else {
-		showPopup(dvTp, ACTIVE_MEETING_INFO);
-	}
+	locationIsAvailable = isAvailable;
+	render();
 }
 
 
@@ -114,7 +155,7 @@ define_function RmsEventSchedulingActiveResponse(char isDefaultLocation,
 		char bookingId[],
 		RmsEventBookingResponse eventBookingResponse) {
 	if (eventBookingResponse.location == locationId) {
-		updateCurrentMeetingDetails(eventBookingResponse);
+		updateActiveMeetingDetails(eventBookingResponse);
 		setAvailable(false);
 	}
 }
@@ -129,7 +170,7 @@ define_function RmsEventSchedulingNextActiveUpdated(char bookingId[],
 define_function RmsEventSchedulingActiveUpdated(char bookingId[],
 		RmsEventBookingResponse eventBookingResponse) {
 	if (eventBookingResponse.location == locationId) {
-		updateCurrentMeetingDetails(eventBookingResponse);
+		updateActiveMeetingDetails(eventBookingResponse);
 		setAvailable(false);
 	}
 }
@@ -157,7 +198,7 @@ define_function RmsEventAssetRegistered(char registeredAssetClientKey[],
 }
 
 define_function RmsEventAssetRelocated(char assetClientKey[],
-		long assetId, 
+		long assetId,
 		long newLocationId) {
 	if (assetClientKey == tpClientKey) {
 		locationId = newLocationId;
@@ -176,3 +217,12 @@ define_function RmsEventAssetLocation(char assetClientKey[], RmsLocation locatio
 define_start
 
 init();
+
+
+
+
+#WARN 'Temporary render() trigger for debugging'
+define_event
+button_event[dvTp,999] {
+	push: render();
+}
