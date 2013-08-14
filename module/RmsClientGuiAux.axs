@@ -48,12 +48,6 @@ volatile long locationId = 0;
  */
 define_function init() {
 	tpClientKey = RmsDevToString(dvTpBase);
-
-	if (!timeline_active(TL_BOOKING_INFO_POLL)) {
-		stack_var long interval[1];
-		interval[1] = 60000; // once per minute
-		timeline_create(TL_BOOKING_INFO_POLL, interval, 1, TIMELINE_RELATIVE, TIMELINE_REPEAT);
-	}
 }
 
 /**
@@ -101,16 +95,6 @@ define_function setAvailable(char isAvailable) {
 	}
 }
 
-/**
- * Queries the meeting info for the location this module is handling.
- */
-define_function queryMeetingInfo() {
-	if (locationId > 0) {
-		RmsBookingActiveRequest(locationId);
-		RmsBookingNextActiveRequest(locationId);
-	}
-}
-
 
 // RMS callbacks
 
@@ -119,7 +103,6 @@ define_function RmsEventSchedulingNextActiveResponse(char isDefaultLocation,
 		integer recordCount,
 		char bookingId[],
 		RmsEventBookingResponse eventBookingResponse) {
-	// TODO only update for next direct event
 	if (eventBookingResponse.location == locationId) {
 		updateNextMeetingDetails(eventBookingResponse);
 	}
@@ -132,6 +115,7 @@ define_function RmsEventSchedulingActiveResponse(char isDefaultLocation,
 		RmsEventBookingResponse eventBookingResponse) {
 	if (eventBookingResponse.location == locationId) {
 		updateCurrentMeetingDetails(eventBookingResponse);
+		setAvailable(false);
 	}
 }
 
@@ -146,6 +130,7 @@ define_function RmsEventSchedulingActiveUpdated(char bookingId[],
 		RmsEventBookingResponse eventBookingResponse) {
 	if (eventBookingResponse.location == locationId) {
 		updateCurrentMeetingDetails(eventBookingResponse);
+		setAvailable(false);
 	}
 }
 
@@ -185,13 +170,6 @@ define_function RmsEventAssetLocation(char assetClientKey[], RmsLocation locatio
 	}*/
 	#WARN 'As we cannot currently associate an ?ASSET.LOCATION response with a device this is a hard coded hack'
 	locationId = initialLocation;
-}
-
-
-define_event
-
-timeline_event[TL_BOOKING_INFO_POLL] {
-	queryMeetingInfo();
 }
 
 
