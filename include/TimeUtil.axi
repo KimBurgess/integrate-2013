@@ -73,3 +73,36 @@ define_function char[32] fuzzyTime(long minutes) {
 
 	return ret;
 }
+
+/**
+ * Converts a string representing time in a hh:mm:ss format to hh:mm[am/pm]
+ *
+ * @param	timeStr		the time to convert in 24 hour format
+ * @return				the passed time in 12 hour format
+ */
+define_function char[7] time12Hour(char timeStr[8]) {
+	sinteger hours;
+	sinteger minutes;
+	char period[2];
+
+	hours = time_to_hour(timeStr);
+	minutes = time_to_minute(timeStr);
+
+	if (hours == -1 || minutes == -1) {
+		return 'error';
+	}
+
+	if (hours > 11) {
+		period = 'pm';
+		hours = hours - 12;
+	} else {
+		period = 'am'
+	}
+
+	if (hours == 0) {
+		hours = 12;
+	}
+
+	return "format('%d', hours), ':', format('%02d', minutes), period";
+} 
+

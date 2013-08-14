@@ -24,16 +24,14 @@ define_variable
 
 constant integer NEXT_MEETING_SUBJECT_VIEW_ADDRESS = 1;
 constant integer NEXT_MEETING_ORGANISER_VIEW_ADDRESS = 2;
-constant integer NEXT_MEETING_START_TIME_VIEW_ADDRESS = 3;
-constant integer NEXT_MEETING_END_TIME_VIEW_ADDRESS = 4;
-constant integer NEXT_MEETING_TIME_UNTIL_START_VIEW_ADDRESS = 5;
-constant integer NEXT_MEETING_DETAILS_VIEW_ADDREss = 6;
+constant integer NEXT_MEETING_TIME_VIEW_ADDRESS = 3;
+constant integer NEXT_MEETING_TIME_UNTIL_START_VIEW_ADDRESS = 4;
+constant integer NEXT_MEETING_DETAILS_VIEW_ADDREss = 5;
 constant integer CURRENT_MEETING_SUBJECT_VIEW_ADDRESS = 11;
 constant integer CURRENT_MEETING_ORGANISER_VIEW_ADDRESS = 12;
-constant integer CURRENT_MEETING_START_TIME_VIEW_ADDRESS = 13;
-constant integer CURRENT_MEETING_END_TIME_VIEW_ADDRESS = 14;
-constant integer CURRENT_MEETING_TIME_REMAINING_VIEW_ADDRESS = 15;
-constant integer CURRENT_MEETING_DETAILS_VIEW_ADDREss = 16;
+constant integer CURRENT_MEETING_TIME_VIEW_ADDRESS = 13;
+constant integer CURRENT_MEETING_TIME_REMAINING_VIEW_ADDRESS = 14;
+constant integer CURRENT_MEETING_DETAILS_VIEW_ADDREss = 15;
 
 constant char ACTIVE_MEETING_INFO[] = '_rmsActiveMeetingInfo';
 constant char NEXT_MEETING_INFO[] = '_rmsNextMeetingInfo';
@@ -53,7 +51,7 @@ define_function init() {
 
 	if (!timeline_active(TL_BOOKING_INFO_POLL)) {
 		stack_var long interval[1];
-		interval[1] = 6000;	// once per minute
+		interval[1] = 60000; // once per minute
 		timeline_create(TL_BOOKING_INFO_POLL, interval, 1, TIMELINE_RELATIVE, TIMELINE_REPEAT);
 	}
 }
@@ -67,8 +65,8 @@ define_function init() {
 define_function updateNextMeetingDetails(RmsEventBookingResponse booking) {
 	setButtonText(dvTp, NEXT_MEETING_SUBJECT_VIEW_ADDRESS, booking.subject);
 	setButtonText(dvTp, NEXT_MEETING_ORGANISER_VIEW_ADDRESS, booking.organizer);
-	setButtonText(dvTp, NEXT_MEETING_START_TIME_VIEW_ADDRESS, booking.startTime);
-	setButtonText(dvTp, NEXT_MEETING_END_TIME_VIEW_ADDRESS, booking.endTime);
+	setButtonText(dvTp, NEXT_MEETING_TIME_VIEW_ADDRESS,
+			"time12Hour(booking.startTime), ' - ', time12Hour(booking.endTime)");
 	setButtonText(dvTp, NEXT_MEETING_TIME_UNTIL_START_VIEW_ADDRESS,
 			"'Starts ', fuzzyTime(booking.minutesUntilStart)");
 	setButtonText(dvTp, NEXT_MEETING_DETAILS_VIEW_ADDREss, booking.details);
@@ -83,8 +81,8 @@ define_function updateNextMeetingDetails(RmsEventBookingResponse booking) {
 define_function updateCurrentMeetingDetails(RmsEventBookingResponse booking) {
 	setButtonText(dvTp, CURRENT_MEETING_SUBJECT_VIEW_ADDRESS, booking.subject);
 	setButtonText(dvTp, CURRENT_MEETING_ORGANISER_VIEW_ADDRESS, booking.organizer);
-	setButtonText(dvTp, CURRENT_MEETING_START_TIME_VIEW_ADDRESS, booking.startTime);
-	setButtonText(dvTp, CURRENT_MEETING_END_TIME_VIEW_ADDRESS, booking.endTime);
+	setButtonText(dvTp, CURRENT_MEETING_TIME_VIEW_ADDRESS,
+			"time12Hour(booking.startTime), ' - ', time12Hour(booking.endTime)");
 	setButtonText(dvTp, CURRENT_MEETING_TIME_REMAINING_VIEW_ADDRESS,
 			"'Ends ', fuzzyTime(booking.remainingMinutes)");
 	setButtonText(dvTp, CURRENT_MEETING_DETAILS_VIEW_ADDREss, booking.details);
@@ -121,6 +119,7 @@ define_function RmsEventSchedulingNextActiveResponse(char isDefaultLocation,
 		integer recordCount,
 		char bookingId[],
 		RmsEventBookingResponse eventBookingResponse) {
+	// TODO only update for next direct event
 	if (eventBookingResponse.location == locationId) {
 		updateNextMeetingDetails(eventBookingResponse);
 	}
