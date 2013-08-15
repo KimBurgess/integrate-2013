@@ -162,6 +162,10 @@
 <FilePathName>include\User.axi</FilePathName>
 <Comments></Comments>
 </File>
+<File CompileType="None" Type="Include"><Identifier>string</Identifier>
+<FilePathName>lib\NCL\string.axi</FilePathName>
+<Comments></Comments>
+</File>
 <File CompileType="None" Type="Include"><Identifier>RmsApi</Identifier>
 <FilePathName>lib\RMS\includes\RmsApi.axi</FilePathName>
 <Comments></Comments>

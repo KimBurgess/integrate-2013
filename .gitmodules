@@ -1,0 +1,3 @@
+[submodule "lib/NCL"]
+	path = lib/NCL
+	url = https://github.com/KimBurgess/netlinx-common-libraries.git
