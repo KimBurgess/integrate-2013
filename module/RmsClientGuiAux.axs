@@ -57,7 +57,7 @@ volatile char tpClientKey[50];
 
 volatile locationInfo uiLocation;
 
-volatile userData activeUser
+volatile userData activeUser;
 
 
 
@@ -74,22 +74,33 @@ define_function init() {
 define_function render() {
 	select {
 
-		active (userIsNull(activeUser) && !uiLocation.isInUse): {
-			updateMeetingInfoView(uiLocation.nextBooking, true);
-			
+		active (userIsNull(activeUser) && uiLocation.isInUse): {
+			updateMeetingInfoView(uiLocation.activeBooking, false);
+
 			hidePopup(dvTp, CALENDAR_VIEW_NAME);
-			
+
 			showPopup(dvTp, IN_USE_INDICATOR_VIEW_NAME);
 			showPopup(dvTp, MEETING_INFO_VIEW_NAME);
 			showPopup(dvTp, AVAILABILITY_GUIDE_VIEW_NAME);
 			showPopup(dvTp, NFC_TOUCH_ON_VIEW_NAME);
 		}
 
-		active (userIsNull(activeUser) && uiLocation.isInUse): {
-			updateMeetingInfoView(uiLocation.activeBooking, false);
-
+		active (userIsNull(activeUser) &&
+				!uiLocation.isInUse &&
+				uiLocation.nextBooking.bookingId == uiLocation.activeBooking.bookingId): {
 			hidePopup(dvTp, CALENDAR_VIEW_NAME);
+			hidePopup(dvTp, MEETING_INFO_VIEW_NAME);
+			
+			showPopup(dvTp, IN_USE_INDICATOR_VIEW_NAME);
+			showPopup(dvTp, AVAILABILITY_GUIDE_VIEW_NAME);
+			showPopup(dvTp, NFC_TOUCH_ON_VIEW_NAME);
+		}
 
+		active (userIsNull(activeUser) && !uiLocation.isInUse): {
+			updateMeetingInfoView(uiLocation.nextBooking, true);
+			
+			hidePopup(dvTp, CALENDAR_VIEW_NAME);
+			
 			showPopup(dvTp, IN_USE_INDICATOR_VIEW_NAME);
 			showPopup(dvTp, MEETING_INFO_VIEW_NAME);
 			showPopup(dvTp, AVAILABILITY_GUIDE_VIEW_NAME);
@@ -287,6 +298,17 @@ define_function RmsEventAssetLocation(char assetClientKey[], RmsLocation locatio
 define_start
 
 init();
+
+
+define_event
+
+data_event[dvTp] {
+
+	online: {
+		render();
+	}
+
+}
 
 
 
