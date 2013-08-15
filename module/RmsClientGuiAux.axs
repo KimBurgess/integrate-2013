@@ -21,6 +21,15 @@ MODULE_NAME='RmsClientGuiAux'(dev vdvRMS, dev dvTp, dev dvTpBase, integer initia
 #INCLUDE 'User'
 
 
+define_type
+
+structure locationInfo {
+	long id;
+	RmsEventBookingResponse activeBooking;
+	RmsEventBookingResponse nextBooking;
+}
+
+
 define_variable
 
 constant integer NEXT_MEETING_SUBJECT_VIEW_ADDRESS = 1;
@@ -44,7 +53,8 @@ constant char NFC_TOUCH_ON_VIEW_NAME[] = 'nfcTouchOn';
 constant long TL_BOOKING_INFO_POLL = 1;
 
 volatile char tpClientKey[50];
-volatile long locationId = 0;
+
+volatile locationInfo uiLocation;
 
 volatile char locationIsAvailable;
 
@@ -64,33 +74,41 @@ define_function init() {
  */
 define_function render() {
 	select {
-	
+
 		active (userIsNull(activeUser) && locationIsAvailable): {
+			updateNextMeetingDetails(uiLocation.nextBooking);
+			// TODO change this to updateMeetingInfoCard(..);
+			
 			hidePopup(dvTp, CALENDAR_VIEW_NAME);
+			
 			showPopup(dvTp, IN_USE_INDICATOR_VIEW_NAME);
 			showPopup(dvTp, NEXT_MEETING_INFO_VIEW_NAME);
 			showPopup(dvTp, AVAILABILITY_GUIDE_VIEW_NAME);
 			showPopup(dvTp, NFC_TOUCH_ON_VIEW_NAME);
 		}
-		
+
 		active (userIsNull(activeUser) && !locationIsAvailable): {
+			updateActiveMeetingDetails(uiLocation.activeBooking);
+
 			hidePopup(dvTp, CALENDAR_VIEW_NAME);
+
 			showPopup(dvTp, IN_USE_INDICATOR_VIEW_NAME);
 			showPopup(dvTp, ACTIVE_MEETING_INFO_VIEW_NAME);
 			showPopup(dvTp, AVAILABILITY_GUIDE_VIEW_NAME);
 			showPopup(dvTp, NFC_TOUCH_ON_VIEW_NAME);
 		}
-		
+
 		active (1): {
 			hidePopup(dvTp, IN_USE_INDICATOR_VIEW_NAME);
 			hidePopup(dvTp, ACTIVE_MEETING_INFO_VIEW_NAME);
 			hidePopup(dvTp, NFC_TOUCH_ON_VIEW_NAME);
+
 			showPopup(dvTp, CALENDAR_VIEW_NAME);
 			showPopup(dvTp, AVAILABILITY_GUIDE_VIEW_NAME);
 			// TODO show user image
 			// TODO show user welcome
 		}
-	
+
 	}
 }
 
@@ -136,6 +154,28 @@ define_function setAvailable(char isAvailable) {
 	render();
 }
 
+/**
+ * Sets the active meeting info for the touch pane location.
+ *
+ * @param	booking		an RmsEventBookingResponse containing the active meeting
+ *						data
+ */
+define_function setActiveMeetingInfo(RmsEventBookingResponse booking) {
+	uiLocation.activeBooking = booking;
+	render();
+}
+
+/**
+ * Sets the next meeting info for the touch panel location.
+ *
+ * @param	booking		an RmsEventBookingResponse containing the next meeting
+ *						data
+ */
+define_function setNextMeetingInfo(RmsEventBookingResponse booking) {
+	uiLocation.nextBooking = booking;
+	render();
+}
+
 
 // RMS callbacks
 
@@ -144,8 +184,8 @@ define_function RmsEventSchedulingNextActiveResponse(char isDefaultLocation,
 		integer recordCount,
 		char bookingId[],
 		RmsEventBookingResponse eventBookingResponse) {
-	if (eventBookingResponse.location == locationId) {
-		updateNextMeetingDetails(eventBookingResponse);
+	if (eventBookingResponse.location == uiLocation.id) {
+		setNextMeetingInfo(eventBookingResponse);
 	}
 }
 
@@ -154,37 +194,37 @@ define_function RmsEventSchedulingActiveResponse(char isDefaultLocation,
 		integer recordCount,
 		char bookingId[],
 		RmsEventBookingResponse eventBookingResponse) {
-	if (eventBookingResponse.location == locationId) {
-		updateActiveMeetingDetails(eventBookingResponse);
+	if (eventBookingResponse.location == uiLocation.id) {
+		setActiveMeetingInfo(eventBookingResponse);
 		setAvailable(false);
 	}
 }
 
 define_function RmsEventSchedulingNextActiveUpdated(char bookingId[],
 		RmsEventBookingResponse eventBookingResponse) {
-	if (eventBookingResponse.location == locationId) {
-		updateNextMeetingDetails(eventBookingResponse);
+	if (eventBookingResponse.location == uiLocation.id) {
+		setNextMeetingInfo(eventBookingResponse);
 	}
 }
 
 define_function RmsEventSchedulingActiveUpdated(char bookingId[],
 		RmsEventBookingResponse eventBookingResponse) {
-	if (eventBookingResponse.location == locationId) {
-		updateActiveMeetingDetails(eventBookingResponse);
+	if (eventBookingResponse.location == uiLocation.id) {
+		setActiveMeetingInfo(eventBookingResponse);
 		setAvailable(false);
 	}
 }
 
 define_function RmsEventSchedulingEventEnded(CHAR bookingId[],
 		RmsEventBookingResponse eventBookingResponse) {
-	if (eventBookingResponse.location == locationId) {
+	if (eventBookingResponse.location == uiLocation.id) {
 		setAvailable(true);
 	}
 }
 
 define_function RmsEventSchedulingEventStarted(CHAR bookingId[],
 		RmsEventBookingResponse eventBookingResponse) {
-	if (eventBookingResponse.location == locationId) {
+	if (eventBookingResponse.location == uiLocation.id) {
 		setAvailable(false);
 	}
 }
@@ -201,16 +241,16 @@ define_function RmsEventAssetRelocated(char assetClientKey[],
 		long assetId,
 		long newLocationId) {
 	if (assetClientKey == tpClientKey) {
-		locationId = newLocationId;
+		uiLocation.id = newLocationId;
 	}
 }
 
 define_function RmsEventAssetLocation(char assetClientKey[], RmsLocation location) {
 	/*if (assetClientKey == tpClientKey) {
-		locationId = location.id;
+		uiLocation.id = location.id;
 	}*/
 	#WARN 'As we cannot currently associate an ?ASSET.LOCATION response with a device this is a hard coded hack'
-	locationId = initialLocation;
+	uiLocation.id = initialLocation;
 }
 
 
