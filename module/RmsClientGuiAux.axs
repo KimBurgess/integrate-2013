@@ -25,6 +25,7 @@ define_type
 
 structure locationInfo {
 	long id;
+	char isAvailable;
 	RmsEventBookingResponse activeBooking;
 	RmsEventBookingResponse nextBooking;
 }
@@ -32,19 +33,14 @@ structure locationInfo {
 
 define_variable
 
-constant integer NEXT_MEETING_SUBJECT_VIEW_ADDRESS = 1;
-constant integer NEXT_MEETING_ORGANISER_VIEW_ADDRESS = 2;
-constant integer NEXT_MEETING_TIME_VIEW_ADDRESS = 3;
-constant integer NEXT_MEETING_TIME_UNTIL_START_VIEW_ADDRESS = 4;
-constant integer NEXT_MEETING_DETAILS_VIEW_ADDREss = 5;
-constant integer ACTIVE_MEETING_SUBJECT_VIEW_ADDRESS = 11;
-constant integer ACTIVE_MEETING_ORGANISER_VIEW_ADDRESS = 12;
-constant integer ACTIVE_MEETING_TIME_VIEW_ADDRESS = 13;
-constant integer ACTIVE_MEETING_TIME_REMAINING_VIEW_ADDRESS = 14;
-constant integer ACTIVE_MEETING_DETAILS_VIEW_ADDREss = 15;
+constant integer MEETING_SUBJECT_VIEW_ADDRESS = 1;
+constant integer MEETING_ORGANISER_VIEW_ADDRESS = 2;
+constant integer MEETING_TIME_VIEW_ADDRESS = 3;
+constant integer MEETING_TIME_DELTA_VIEW_ADDRESS = 4;
+constant integer MEETING_DETAILS_VIEW_ADDREss = 5;
+constant integer MEETING_HEADER_VIEW_ADDREss = 6;
 
-constant char ACTIVE_MEETING_INFO_VIEW_NAME[] = '_rmsActiveMeetingInfo';
-constant char NEXT_MEETING_INFO_VIEW_NAME[] = '_rmsNextMeetingInfo';
+constant char MEETING_INFO_VIEW_NAME[] = '_rmsMeetingInfo';
 constant char IN_USE_INDICATOR_VIEW_NAME[] = '_rmsInUseIndicator';
 constant char AVAILABILITY_GUIDE_VIEW_NAME[] = '_rmsAvailabilityGuide';
 constant char CALENDAR_VIEW_NAME[] = '_rmsCalendar';
@@ -55,8 +51,6 @@ constant long TL_BOOKING_INFO_POLL = 1;
 volatile char tpClientKey[50];
 
 volatile locationInfo uiLocation;
-
-volatile char locationIsAvailable;
 
 volatile userData activeUser
 
@@ -75,32 +69,31 @@ define_function init() {
 define_function render() {
 	select {
 
-		active (userIsNull(activeUser) && locationIsAvailable): {
-			updateNextMeetingDetails(uiLocation.nextBooking);
-			// TODO change this to updateMeetingInfoCard(..);
+		active (userIsNull(activeUser) && uiLocation.isAvailable): {
+			updateMeetingInfoView(uiLocation.nextBooking, true);
 			
 			hidePopup(dvTp, CALENDAR_VIEW_NAME);
 			
 			showPopup(dvTp, IN_USE_INDICATOR_VIEW_NAME);
-			showPopup(dvTp, NEXT_MEETING_INFO_VIEW_NAME);
+			showPopup(dvTp, MEETING_INFO_VIEW_NAME);
 			showPopup(dvTp, AVAILABILITY_GUIDE_VIEW_NAME);
 			showPopup(dvTp, NFC_TOUCH_ON_VIEW_NAME);
 		}
 
-		active (userIsNull(activeUser) && !locationIsAvailable): {
-			updateActiveMeetingDetails(uiLocation.activeBooking);
+		active (userIsNull(activeUser) && !uiLocation.isAvailable): {
+			updateMeetingInfoView(uiLocation.activeBooking, false);
 
 			hidePopup(dvTp, CALENDAR_VIEW_NAME);
 
 			showPopup(dvTp, IN_USE_INDICATOR_VIEW_NAME);
-			showPopup(dvTp, ACTIVE_MEETING_INFO_VIEW_NAME);
+			showPopup(dvTp, MEETING_INFO_VIEW_NAME);
 			showPopup(dvTp, AVAILABILITY_GUIDE_VIEW_NAME);
 			showPopup(dvTp, NFC_TOUCH_ON_VIEW_NAME);
 		}
 
 		active (1): {
 			hidePopup(dvTp, IN_USE_INDICATOR_VIEW_NAME);
-			hidePopup(dvTp, ACTIVE_MEETING_INFO_VIEW_NAME);
+			hidePopup(dvTp, MEETING_INFO_VIEW_NAME);
 			hidePopup(dvTp, NFC_TOUCH_ON_VIEW_NAME);
 
 			showPopup(dvTp, CALENDAR_VIEW_NAME);
@@ -113,35 +106,33 @@ define_function render() {
 }
 
 /**
- * Updates the 'next meeting' info on the touch panel.
+ * Updates the meeting details card on the touch panel.
  *
- * @param		booking		an RmsEventBookingResponse containing the booking
+ * @param	booking			an RmsEventBookingResponse containing the booking
  *							data.
+ * @param	isFutureEvent	a boolean, true if 'booking' is in the future
  */
-define_function updateNextMeetingDetails(RmsEventBookingResponse booking) {
-	setButtonText(dvTp, NEXT_MEETING_SUBJECT_VIEW_ADDRESS, booking.subject);
-	setButtonText(dvTp, NEXT_MEETING_ORGANISER_VIEW_ADDRESS, booking.organizer);
-	setButtonText(dvTp, NEXT_MEETING_TIME_VIEW_ADDRESS,
-			"time12Hour(booking.startTime), ' - ', time12Hour(booking.endTime)");
-	setButtonText(dvTp, NEXT_MEETING_TIME_UNTIL_START_VIEW_ADDRESS,
-			"'Starts ', fuzzyTime(booking.minutesUntilStart)");
-	setButtonText(dvTp, NEXT_MEETING_DETAILS_VIEW_ADDREss, booking.details);
-}
+define_function updateMeetingInfoView(RmsEventBookingResponse booking,
+		char isFutureEvent) {
+	stack_var char header[50]
+	stack_var char timeDelta[50]
 
-/**
- * Updates the 'current meeting' info on the touch panel.
- *
- * @param		booking		an RmsEventBookingResponse containing the booking
- *							data.
- */
-define_function updateActiveMeetingDetails(RmsEventBookingResponse booking) {
-	setButtonText(dvTp, ACTIVE_MEETING_SUBJECT_VIEW_ADDRESS, booking.subject);
-	setButtonText(dvTp, ACTIVE_MEETING_ORGANISER_VIEW_ADDRESS, booking.organizer);
-	setButtonText(dvTp, ACTIVE_MEETING_TIME_VIEW_ADDRESS,
+	if (isFutureEvent) {
+		header = 'Next Meeting';
+		timeDelta = "'Starts ', fuzzyTime(booking.minutesUntilStart)";
+	} else {
+		header = 'Meeting Details';
+		timeDelta = "'Ends ', fuzzyTime(booking.remainingMinutes)";
+	}
+	
+	setButtonText(dvTp, MEETING_HEADER_VIEW_ADDREss, header);
+	setButtonText(dvTp, MEETING_SUBJECT_VIEW_ADDRESS, booking.subject);
+	setButtonText(dvTp, MEETING_ORGANISER_VIEW_ADDRESS, booking.organizer);
+	setButtonText(dvTp, MEETING_TIME_VIEW_ADDRESS,
 			"time12Hour(booking.startTime), ' - ', time12Hour(booking.endTime)");
-	setButtonText(dvTp, ACTIVE_MEETING_TIME_REMAINING_VIEW_ADDRESS,
-			"'Ends ', fuzzyTime(booking.remainingMinutes)");
-	setButtonText(dvTp, ACTIVE_MEETING_DETAILS_VIEW_ADDREss, booking.details);
+	setButtonText(dvTp, MEETING_TIME_DELTA_VIEW_ADDRESS, timeDelta);
+	setButtonText(dvTp, MEETING_DETAILS_VIEW_ADDREss, booking.details);
+	
 }
 
 /**
@@ -150,7 +141,7 @@ define_function updateActiveMeetingDetails(RmsEventBookingResponse booking) {
  * @param	isAvailable		a boolean, true if the room should show as available
  */
 define_function setAvailable(char isAvailable) {
-	locationIsAvailable = isAvailable;
+	uiLocation.isAvailable = isAvailable;
 	render();
 }
 
