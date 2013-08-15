@@ -10,6 +10,7 @@ MODULE_NAME='RmsClientGuiAux'(dev vdvRMS, dev dvTp, dev dvTpBase, integer initia
 #DEFINE INCLUDE_RMS_EVENT_ASSET_LOCATION_CALLBACK
 #DEFINE INCLUDE_SCHEDULING_EVENT_ENDED_CALLBACK
 #DEFINE INCLUDE_SCHEDULING_EVENT_STARTED_CALLBACK
+#DEFINE INCLUDE_SCHEDULING_CREATE_RESPONSE_CALLBACK
 
 
 #INCLUDE 'TPUtil'
@@ -41,10 +42,10 @@ constant integer MEETING_TIME_DELTA_VIEW_ADDRESS = 4;
 constant integer MEETING_DETAILS_VIEW_ADDREss = 5;
 constant integer MEETING_HEADER_VIEW_ADDREss = 6;
 
-constant char MEETING_INFO_VIEW_NAME[] = '_rmsMeetingInfo';
-constant char IN_USE_INDICATOR_VIEW_NAME[] = '_rmsInUseIndicator';
-constant char AVAILABILITY_GUIDE_VIEW_NAME[] = '_rmsAvailabilityGuide';
-constant char CALENDAR_VIEW_NAME[] = '_rmsCalendar';
+constant char MEETING_INFO_VIEW_NAME[] = 'rmsMeetingInfoCard';
+constant char IN_USE_INDICATOR_VIEW_NAME[] = 'rmsInUseIndicator';
+constant char AVAILABILITY_GUIDE_VIEW_NAME[] = 'rmsAvailabilityGuide';
+constant char CALENDAR_VIEW_NAME[] = 'rmsCalendar';
 constant char NFC_TOUCH_ON_VIEW_NAME[] = 'nfcTouchOn';
 
 constant char NFC_BOOKING_NAME_PLACEHOLDER[] = '<name>';
@@ -110,10 +111,10 @@ define_function render() {
 		active (1): {
 			hidePopup(dvTp, IN_USE_INDICATOR_VIEW_NAME);
 			hidePopup(dvTp, MEETING_INFO_VIEW_NAME);
+			hidePopup(dvTp, AVAILABILITY_GUIDE_VIEW_NAME);
 			hidePopup(dvTp, NFC_TOUCH_ON_VIEW_NAME);
 
 			showPopup(dvTp, CALENDAR_VIEW_NAME);
-			showPopup(dvTp, AVAILABILITY_GUIDE_VIEW_NAME);
 			// TODO show user image
 			// TODO show user welcome
 		}
@@ -268,6 +269,14 @@ define_function RmsEventSchedulingEventStarted(CHAR bookingId[],
 	if (eventBookingResponse.location == uiLocation.id) {
 		setInUse(true);
 	}
+}
+
+define_function RmsEventSchedulingCreateResponse(char isDefaultLocation,
+		char responseText[],
+		RmsEventBookingResponse eventBookingResponse) {
+	// TODO as this fires waaaaaay before any of the next meeting update
+	// events check if this replaces the next active event and update the UI
+	// accordingly.
 }
 
 define_function RmsEventAssetRegistered(char registeredAssetClientKey[],
