@@ -130,6 +130,10 @@
 <UserName></UserName>
 <Password></Password>
 <Comments></Comments>
+<File CompileType="None" Type="Include"><Identifier>AssetLocationTracker</Identifier>
+<FilePathName>include\AssetLocationTracker.axi</FilePathName>
+<Comments></Comments>
+</File>
 <File CompileType="None" Type="Include"><Identifier>Devices</Identifier>
 <FilePathName>include\Devices.axi</FilePathName>
 <Comments></Comments>

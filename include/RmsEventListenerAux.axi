@@ -48,7 +48,7 @@ data_event[vdvRMS] {
 				location.prestigeName = RmsParseCmdParam(data.text);
 				location.timezone = RmsParseCmdParam(data.text);
 				location.assetLicensed = RmsBooleanValue(RmsParseCmdParam(data.text));
-				
+
 				RmsEventAssetLocation(assetClientKey, location);
 			}
 			#END_IF

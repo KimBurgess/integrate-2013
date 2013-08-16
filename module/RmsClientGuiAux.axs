@@ -5,9 +5,6 @@ MODULE_NAME='RmsClientGuiAux'(dev vdvRMS, dev dvTp, dev dvTpBase, integer initia
 #DEFINE INCLUDE_SCHEDULING_ACTIVE_RESPONSE_CALLBACK
 #DEFINE INCLUDE_SCHEDULING_NEXT_ACTIVE_UPDATED_CALLBACK
 #DEFINE INCLUDE_SCHEDULING_ACTIVE_UPDATED_CALLBACK
-#DEFINE INCLUDE_RMS_EVENT_ASSET_REGISTERED_CALLBACK
-#DEFINE INCLUDE_RMS_EVENT_ASSET_RELOCATED_CALLBACK
-#DEFINE INCLUDE_RMS_EVENT_ASSET_LOCATION_CALLBACK
 #DEFINE INCLUDE_SCHEDULING_EVENT_ENDED_CALLBACK
 #DEFINE INCLUDE_SCHEDULING_EVENT_STARTED_CALLBACK
 #DEFINE INCLUDE_SCHEDULING_CREATE_RESPONSE_CALLBACK
@@ -16,17 +13,15 @@ MODULE_NAME='RmsClientGuiAux'(dev vdvRMS, dev dvTp, dev dvTpBase, integer initia
 #INCLUDE 'TPUtil'
 #INCLUDE 'TimeUtil'
 #INCLUDE 'string'
-#INCLUDE 'RmsEventListener'
+#INCLUDE 'AssetLocationTracker'
 #INCLUDE 'RmsSchedulingApi'
 #INCLUDE 'RmsSchedulingEventListener'
-#INCLUDE 'RmsEventListenerAux'
 #INCLUDE 'User'
 
 
 define_type
 
 structure locationInfo {
-	long id;
 	char isInUse;
 	RmsEventBookingResponse activeBooking;
 	RmsEventBookingResponse nextBooking;
@@ -52,10 +47,6 @@ constant char NFC_BOOKING_NAME_PLACEHOLDER[] = '<name>';
 constant char NFC_BOOKING_DESCRIPTION_EXTERNAL[] = 'Ad-hoc meeting created by <name> from the touch panel.';
 constant char NFC_BOOKING_DESCRIPTION_INTERNAL[] = 'Ad-hoc meeting';
 
-constant long TL_BOOKING_INFO_POLL = 1;
-
-volatile char tpClientKey[50];
-
 volatile locationInfo uiLocation;
 
 volatile userData activeUser;
@@ -66,7 +57,7 @@ volatile userData activeUser;
  * Initialise module variables that can be assisgned at compile time.
  */
 define_function init() {
-	tpClientKey = RmsDevToString(dvTpBase);
+	setLocationTrackerAsset(RmsDevToString(dvTpBase));
 }
 
 /**
@@ -238,7 +229,7 @@ define_function RmsEventSchedulingNextActiveResponse(char isDefaultLocation,
 		integer recordCount,
 		char bookingId[],
 		RmsEventBookingResponse eventBookingResponse) {
-	if (eventBookingResponse.location == uiLocation.id) {
+	if (eventBookingResponse.location == locationTracker.locationId) {
 		setNextMeetingInfo(eventBookingResponse);
 	}
 }
@@ -248,7 +239,7 @@ define_function RmsEventSchedulingActiveResponse(char isDefaultLocation,
 		integer recordCount,
 		char bookingId[],
 		RmsEventBookingResponse eventBookingResponse) {
-	if (eventBookingResponse.location == uiLocation.id) {
+	if (eventBookingResponse.location == locationTracker.locationId) {
 		setActiveMeetingInfo(eventBookingResponse);
 		setInUse(true);
 	}
@@ -256,14 +247,14 @@ define_function RmsEventSchedulingActiveResponse(char isDefaultLocation,
 
 define_function RmsEventSchedulingNextActiveUpdated(char bookingId[],
 		RmsEventBookingResponse eventBookingResponse) {
-	if (eventBookingResponse.location == uiLocation.id) {
+	if (eventBookingResponse.location == locationTracker.locationId) {
 		setNextMeetingInfo(eventBookingResponse);
 	}
 }
 
 define_function RmsEventSchedulingActiveUpdated(char bookingId[],
 		RmsEventBookingResponse eventBookingResponse) {
-	if (eventBookingResponse.location == uiLocation.id) {
+	if (eventBookingResponse.location == locationTracker.locationId) {
 		setActiveMeetingInfo(eventBookingResponse);
 		setInUse(true);
 	}
@@ -271,14 +262,14 @@ define_function RmsEventSchedulingActiveUpdated(char bookingId[],
 
 define_function RmsEventSchedulingEventEnded(CHAR bookingId[],
 		RmsEventBookingResponse eventBookingResponse) {
-	if (eventBookingResponse.location == uiLocation.id) {
+	if (eventBookingResponse.location == locationTracker.locationId) {
 		setInUse(false);
 	}
 }
 
 define_function RmsEventSchedulingEventStarted(CHAR bookingId[],
 		RmsEventBookingResponse eventBookingResponse) {
-	if (eventBookingResponse.location == uiLocation.id) {
+	if (eventBookingResponse.location == locationTracker.locationId) {
 		setInUse(true);
 	}
 }
@@ -286,7 +277,7 @@ define_function RmsEventSchedulingEventStarted(CHAR bookingId[],
 define_function RmsEventSchedulingCreateResponse(char isDefaultLocation,
 		char responseText[],
 		RmsEventBookingResponse eventBookingResponse) {
-	if (eventBookingResponse.location = uiLocation.id) {
+	if (eventBookingResponse.location = locationTracker.locationId) {
 	
 		if (eventBookingResponse.isSuccessful && !userIsNull(activeUser)) {
 			sendBookingConfirmation(activeUser.email, eventBookingResponse);
@@ -296,30 +287,6 @@ define_function RmsEventSchedulingCreateResponse(char isDefaultLocation,
 	// events check if this replaces the next active event and update the UI
 	// accordingly.
 	}
-}
-
-define_function RmsEventAssetRegistered(char registeredAssetClientKey[],
-		long assetId,
-		char newAssetRegistration) {
-	if (registeredAssetClientKey == tpClientKey) {
-		RmsAssetLocationRequest(tpClientKey)
-	}
-}
-
-define_function RmsEventAssetRelocated(char assetClientKey[],
-		long assetId,
-		long newLocationId) {
-	if (assetClientKey == tpClientKey) {
-		uiLocation.id = newLocationId;
-	}
-}
-
-define_function RmsEventAssetLocation(char assetClientKey[], RmsLocation location) {
-	/*if (assetClientKey == tpClientKey) {
-		uiLocation.id = location.id;
-	}*/
-	#WARN 'As we cannot currently associate an ?ASSET.LOCATION response with a device this is a hard coded hack'
-	uiLocation.id = initialLocation;
 }
 
 
