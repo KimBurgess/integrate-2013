@@ -15,13 +15,14 @@ MODULE_NAME='RmsHeartAttack' (dev vdvRMS)
 #DEFINE INCLUDE_RMS_EVENT_CUSTOM_COMMAND_CALLBACK
 
 
+#INCLUDE 'RmsApi'
 #INCLUDE 'RmsApiAux'
 #INCLUDE 'RmsEventListener'
 
 
 define_variable
 
-constant char RMS_CUSTOM_COMMAND_HEARTATTACK[] = 'CLIENT.CONFIG.HEARTATTACK';
+constant char RMS_CUSTOM_COMMAND_HEARTATTACK[] = '@CONFIG.CLIENT.HEARTATTACK';
 
 constant long FORCE_REFRESH = 1;
 
@@ -79,5 +80,7 @@ define_function RmsEventCustomCommand(char header[], char data[]) {
 define_event
 
 timeline_event[FORCE_REFRESH] {
-	RmsRetrieveClientMessages();
+	if ([vdvRMS, RMS_CHANNEL_CLIENT_ONLINE]) {
+		RmsRetrieveClientMessages();
+	}
 }
