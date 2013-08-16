@@ -115,6 +115,9 @@ define_function render() {
 			hidePopup(dvTp, NFC_TOUCH_ON_VIEW_NAME);
 
 			showPopup(dvTp, CALENDAR_VIEW_NAME);
+			// TODO nuke all this from here and just show the calendar popup
+			// as a component of the NFC login process
+			
 			// TODO show user image
 			// TODO show user welcome
 		}
@@ -150,6 +153,15 @@ define_function updateMeetingInfoView(RmsEventBookingResponse booking,
 	setButtonText(dvTp, MEETING_TIME_DELTA_VIEW_ADDRESS, timeDelta);
 	setButtonText(dvTp, MEETING_DETAILS_VIEW_ADDREss, booking.details);
 	
+}
+
+define_function sendBookingConfirmation(char emailAddress[],
+		RmsEventBookingResponse booking) {
+	RmsEmail(emailAddress,
+			'RMS Room Booking Confirmation',
+			"'This is some placeholder text. But I can tell you your booking was called: ', booking.subject, '.'",
+			'',
+			'');
 }
 
 /**
@@ -274,9 +286,16 @@ define_function RmsEventSchedulingEventStarted(CHAR bookingId[],
 define_function RmsEventSchedulingCreateResponse(char isDefaultLocation,
 		char responseText[],
 		RmsEventBookingResponse eventBookingResponse) {
+	if (eventBookingResponse.location = uiLocation.id) {
+	
+		if (eventBookingResponse.isSuccessful && !userIsNull(activeUser)) {
+			sendBookingConfirmation(activeUser.email, eventBookingResponse);
+		}
+
 	// TODO as this fires waaaaaay before any of the next meeting update
 	// events check if this replaces the next active event and update the UI
 	// accordingly.
+	}
 }
 
 define_function RmsEventAssetRegistered(char registeredAssetClientKey[],
