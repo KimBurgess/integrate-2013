@@ -210,6 +210,10 @@
 <FilePathName>module\RmsClientGuiAux.axs</FilePathName>
 <Comments></Comments>
 </File>
+<File CompileType="Netlinx" Type="Module"><Identifier>RmsHeartAttack</Identifier>
+<FilePathName>module\RmsHeartAttack.axs</FilePathName>
+<Comments></Comments>
+</File>
 <File CompileType="Netlinx" Type="MasterSrc"><Identifier>NOC</Identifier>
 <FilePathName>NOC.axs</FilePathName>
 <Comments></Comments>

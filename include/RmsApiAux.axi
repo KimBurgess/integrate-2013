@@ -54,12 +54,12 @@ define_function char RmsEmail(char address[],
 		send_string 0, '>>>> RMS API AUX ERROR <RmsEmail> :: missing address';
 		return false;
 	}
-	
+
 	if (subject == '') {
 		send_string 0, '>>>> RMS API AUX ERROR <RmsEmail> :: missing subject';
 		return false;
 	}
-	
+
 	if (body == '') {
 		send_string 0, '>>>> RMS API AUX ERROR <RmsEmail> :: missing body';
 		return false;
@@ -73,6 +73,26 @@ define_function char RmsEmail(char address[],
 	rmsCommand = RmsPackCmdParam(rmsCommand,cc);
 	rmsCommand = RmsPackCmdParam(rmsCommand,bcc);
 	send_command vdvRMS, rmsCommand;
+
+	return true;
+}
+
+
+/**
+ * Force the RMS client to immediately retrieve and process all pending
+ * client-destined messages from the RMS server.
+ *
+ * @return			a boolean, true if successful
+ */
+define_function char RmsRetrieveClientMessages() {
+	stack_var char rmsCommand[RMS_MAX_CMD_LEN];
+
+	if (![vdvRMS, RMS_CHANNEL_CLIENT_ONLINE]) {
+		send_string 0, '>>>> RMS API AUX ERROR <RmsRetrieveClientMessages> :: client is currently offline';
+		return false;
+	}
+
+	send_command vdvRMS, 'CLIENT.MESSAGES.RETRIEVE';
 
 	return true;
 }
