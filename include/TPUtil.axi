@@ -5,18 +5,34 @@ program_name = 'TPUtil'
 
 
 /**
+ * Shows a popup on the current page.
+ *
+ * @param	tp			the device to show the popup page on
+ * @param	popupName	the name of the popup page to show
+ */
+define_function showPopup(dev tp, char popupName[]) {
+	send_command tp, "'@PPN-', popupName"
+}
+
+/**
  * Shows a popup page.
  *
  * @param	tp			the device to show the popup page on
  * @param	popupName	the name of the popup page to show
  * @param	pageName	the name of the page to show the popup on
  */
-define_function showPopup(dev tp, char popupName[], char pageName[]) {
-	if (pagename) {
-		send_command tp, "'@PPN-', popupName, ';', pageName"
-	} else {
-		send_command tp, "'@PPN-', popupName"
-	}
+define_function showPopupEx(dev tp, char popupName[], char pageName[]) {
+	send_command tp, "'@PPN-', popupName, ';', pageName"
+}
+
+/**
+ * Hides a popup on the current page.
+ *
+ * @param	tp			the device to hide the popup page on
+ * @param	popupName	the name of the popup page to show
+ */
+define_function hidePopup(dev tp, char popupName[]) {
+	send_command tp, "'@PPF-', popupName"
 }
 
 /**
@@ -26,12 +42,8 @@ define_function showPopup(dev tp, char popupName[], char pageName[]) {
  * @param	popupName	the name of the popup page to show
  * @param	pageName	the name of the page to show the popup on
  */
-define_function hidePopup(dev tp, char popupName[], char pageName[]) {
-	if (pagename) {
-		send_command tp, "'@PPF-', popupName, ';', pageName"
-	} else {
-		send_command tp, "'@PPF-', popupName"
-	}
+define_function hidePopupEx(dev tp, char popupName[], char pageName[]) {
+	send_command tp, "'@PPF-', popupName, ';', pageName"
 }
 
 /**

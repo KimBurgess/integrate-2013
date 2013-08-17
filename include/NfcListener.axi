@@ -42,7 +42,7 @@ custom_event[dvTp.number:1:dvTp.system,
 		TP_CUSTOM_EVENT_NFC,
 		NFC_EVENT_TAG_READ] {
 	stack_var integer tagType;
-	stack_var integer dataType; 
+	stack_var integer dataType;
 	stack_var integer dataLength;
 
 	tagType = type_cast(custom.value1);
@@ -57,7 +57,7 @@ custom_event[dvTp.number:1:dvTp.system,
 			// not implemented in current firmware
 		}
 	}
-	
+
 }
 #END_IF
 

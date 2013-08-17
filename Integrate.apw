@@ -130,6 +130,10 @@
 <UserName></UserName>
 <Password></Password>
 <Comments></Comments>
+<File CompileType="None" Type="Include"><Identifier>NfcListener</Identifier>
+<FilePathName>include\NfcListener.axi</FilePathName>
+<Comments></Comments>
+</File>
 <File CompileType="None" Type="Include"><Identifier>RmsAssetLocationTracker</Identifier>
 <FilePathName>include\RmsAssetLocationTracker.axi</FilePathName>
 <Comments></Comments>
@@ -204,10 +208,6 @@
 </File>
 <File CompileType="Netlinx" Type="Module"><Identifier>RmsHeartAttack</Identifier>
 <FilePathName>module\RmsHeartAttack.axs</FilePathName>
-<Comments></Comments>
-</File>
-<File CompileType="Netlinx" Type="Module"><Identifier>RmsNfcBooking</Identifier>
-<FilePathName>module\RmsNfcBooking.axs</FilePathName>
 <Comments></Comments>
 </File>
 <File CompileType="Netlinx" Type="MasterSrc"><Identifier>NOC</Identifier>

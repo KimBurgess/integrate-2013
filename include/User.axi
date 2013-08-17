@@ -1,6 +1,10 @@
 PROGRAM_NAME='User'
 
 
+#IF_NOT_DEFINED __USER_AUTH__
+#DEFINE __USER_AUTH__
+
+
 define_type
 
 structure UserData {
@@ -37,3 +41,5 @@ define_function char userIsEqual(UserData user1, UserData user2) {
 define_function char userIsNull(userData user) {
 	return userIsEqual(user, nullUser);
 }
+
+#END_IF // __USER_AUTH__

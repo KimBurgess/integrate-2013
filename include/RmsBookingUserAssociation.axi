@@ -1,6 +1,10 @@
 PROGRAM_NAME='RmsBookingUserAssociation'
 
 
+#IF_NOT_DEFINED __RMS_BOOKING_USER_ASSOCIATION__
+#DEFINE __RMS_BOOKING_USER_ASSOCIATION__
+
+
 #INCLUDE 'User'
 #INCLUDE 'string'
 #INCLUDE 'RmsSchedulingApi'
@@ -50,3 +54,5 @@ define_function char insertUserDetails(RmsEventBookingResponse booking, UserData
 	// TODO inject user info into booking
 	return false;
 }
+
+#END_IF // __RMS_BOOKING_USER_ASSOCIATION__
