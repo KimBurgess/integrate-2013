@@ -130,24 +130,24 @@
 <UserName></UserName>
 <Password></Password>
 <Comments></Comments>
-<File CompileType="None" Type="Include"><Identifier>AssetLocationTracker</Identifier>
-<FilePathName>include\AssetLocationTracker.axi</FilePathName>
-<Comments></Comments>
-</File>
 <File CompileType="None" Type="Include"><Identifier>Devices</Identifier>
 <FilePathName>include\Devices.axi</FilePathName>
 <Comments></Comments>
 </File>
-<File CompileType="None" Type="Include"><Identifier>RmsApiAux</Identifier>
-<FilePathName>include\RmsApiAux.axi</FilePathName>
+<File CompileType="None" Type="Include"><Identifier>RmsAssetLocationTracker</Identifier>
+<FilePathName>include\RmsAssetLocationTracker.axi</FilePathName>
 <Comments></Comments>
 </File>
 <File CompileType="None" Type="Include"><Identifier>RmsCore</Identifier>
 <FilePathName>include\RmsCore.axi</FilePathName>
 <Comments></Comments>
 </File>
-<File CompileType="None" Type="Include"><Identifier>RmsEventListenerAux</Identifier>
-<FilePathName>include\RmsEventListenerAux.axi</FilePathName>
+<File CompileType="None" Type="Include"><Identifier>RmsExtendedApi</Identifier>
+<FilePathName>include\RmsExtendedApi.axi</FilePathName>
+<Comments></Comments>
+</File>
+<File CompileType="None" Type="Include"><Identifier>RmsExtendedEventListener</Identifier>
+<FilePathName>include\RmsExtendedEventListener.axi</FilePathName>
 <Comments></Comments>
 </File>
 <File CompileType="None" Type="Include"><Identifier>TimeUtil</Identifier>
@@ -206,8 +206,8 @@
 <FilePathName>lib\RMS\RmsNetLinxAdapter_dr4_0_0.jar</FilePathName>
 <Comments></Comments>
 </File>
-<File CompileType="Netlinx" Type="Module"><Identifier>RmsClientGuiAux</Identifier>
-<FilePathName>module\RmsClientGuiAux.axs</FilePathName>
+<File CompileType="Netlinx" Type="Module"><Identifier>RmsExtendedClientGui</Identifier>
+<FilePathName>module\RmsExtendedClientGui.axs</FilePathName>
 <Comments></Comments>
 </File>
 <File CompileType="Netlinx" Type="Module"><Identifier>RmsHeartAttack</Identifier>

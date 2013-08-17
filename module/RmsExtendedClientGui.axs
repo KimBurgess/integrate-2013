@@ -1,4 +1,4 @@
-MODULE_NAME='RmsClientGuiAux'(dev vdvRMS, dev dvTp, dev dvTpBase, integer initialLocation)
+MODULE_NAME='RmsExtendedClientGui'(dev vdvRMS, dev dvTp, dev dvTpBase, integer initialLocation)
 
 
 #DEFINE INCLUDE_SCHEDULING_NEXT_ACTIVE_RESPONSE_CALLBACK
@@ -13,7 +13,7 @@ MODULE_NAME='RmsClientGuiAux'(dev vdvRMS, dev dvTp, dev dvTpBase, integer initia
 #INCLUDE 'TPUtil'
 #INCLUDE 'TimeUtil'
 #INCLUDE 'string'
-#INCLUDE 'AssetLocationTracker'
+#INCLUDE 'RmsAssetLocationTracker'
 #INCLUDE 'RmsSchedulingApi'
 #INCLUDE 'RmsSchedulingEventListener'
 #INCLUDE 'User'
@@ -82,7 +82,7 @@ define_function render() {
 				uiLocation.nextBooking.bookingId == uiLocation.activeBooking.bookingId): {
 			hidePopup(dvTp, CALENDAR_VIEW_NAME);
 			hidePopup(dvTp, MEETING_INFO_VIEW_NAME);
-			
+
 			showPopup(dvTp, IN_USE_INDICATOR_VIEW_NAME);
 			showPopup(dvTp, AVAILABILITY_GUIDE_VIEW_NAME);
 			showPopup(dvTp, NFC_TOUCH_ON_VIEW_NAME);
@@ -90,9 +90,9 @@ define_function render() {
 
 		active (userIsNull(activeUser) && !uiLocation.isInUse): {
 			updateMeetingInfoView(uiLocation.nextBooking, true);
-			
+
 			hidePopup(dvTp, CALENDAR_VIEW_NAME);
-			
+
 			showPopup(dvTp, IN_USE_INDICATOR_VIEW_NAME);
 			showPopup(dvTp, MEETING_INFO_VIEW_NAME);
 			showPopup(dvTp, AVAILABILITY_GUIDE_VIEW_NAME);
@@ -108,7 +108,7 @@ define_function render() {
 			showPopup(dvTp, CALENDAR_VIEW_NAME);
 			// TODO nuke all this from here and just show the calendar popup
 			// as a component of the NFC login process
-			
+
 			// TODO show user image
 			// TODO show user welcome
 		}
@@ -135,7 +135,7 @@ define_function updateMeetingInfoView(RmsEventBookingResponse booking,
 		header = 'Meeting Details';
 		timeDelta = "'Ends ', fuzzyTime(booking.remainingMinutes)";
 	}
-	
+
 	setButtonText(dvTp, MEETING_HEADER_VIEW_ADDREss, header);
 	setButtonText(dvTp, MEETING_SUBJECT_VIEW_ADDRESS, booking.subject);
 	setButtonText(dvTp, MEETING_ORGANISER_VIEW_ADDRESS, booking.organizer);
@@ -143,7 +143,7 @@ define_function updateMeetingInfoView(RmsEventBookingResponse booking,
 			"time12Hour(booking.startTime), ' - ', time12Hour(booking.endTime)");
 	setButtonText(dvTp, MEETING_TIME_DELTA_VIEW_ADDRESS, timeDelta);
 	setButtonText(dvTp, MEETING_DETAILS_VIEW_ADDREss, booking.details);
-	
+
 }
 
 define_function sendBookingConfirmation(char emailAddress[],
@@ -180,7 +180,7 @@ define_function char extractRmsUser(RmsEventBookingResponse booking) {
 	if (name == '') {
 		return false;
 	}
-	
+
 	booking.organizer = name;
 	booking.details = NFC_BOOKING_DESCRIPTION_INTERNAL;
 
@@ -278,7 +278,7 @@ define_function RmsEventSchedulingCreateResponse(char isDefaultLocation,
 		char responseText[],
 		RmsEventBookingResponse eventBookingResponse) {
 	if (eventBookingResponse.location = locationTracker.locationId) {
-	
+
 		if (eventBookingResponse.isSuccessful && !userIsNull(activeUser)) {
 			sendBookingConfirmation(activeUser.email, eventBookingResponse);
 		}

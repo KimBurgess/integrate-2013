@@ -26,7 +26,7 @@ volatile integer rmsLocationBoardroom = 29;
 
 define_module 'RmsClientGui_dr4_0_0' mdlRmsGui(vdvRmsGui, rmsTpRms, rmsTp);
 
-define_module 'RmsClientGuiAux' mdlRmsGuiBoardroomAux(vdvRMS, dvBoardroomSchedulingTpRmsAux, dvBoardroomSchedulingTp, rmsLocationBoardroom);
+define_module 'RmsExtendedClientGui' mdlRmsGuiBoardroom(vdvRMS, dvBoardroomSchedulingTpRmsExtended, dvBoardroomSchedulingTp, rmsLocationBoardroom);
 
 
 define_event

@@ -15,8 +15,7 @@ MODULE_NAME='RmsHeartAttack' (dev vdvRMS)
 #DEFINE INCLUDE_RMS_EVENT_CUSTOM_COMMAND_CALLBACK
 
 
-#INCLUDE 'RmsApi'
-#INCLUDE 'RmsApiAux'
+#INCLUDE 'RmsExtendedApi'
 #INCLUDE 'RmsEventListener'
 
 
@@ -48,13 +47,13 @@ define_function setHeartAttack(char isEnabled, integer interval) {
 			interval = DEFAULT_INTERVAL;
 		}
 		times[1] = interval * 1000;
-		
+
 		timeline_create(FORCE_REFRESH,
 				times,
-				1, 
+				1,
 				TIMELINE_ABSOLUTE,
 				TIMELINE_REPEAT);
-	
+
 		send_string 0, "'>>>> RMS HEARTATTACK :: starting myocardial infarction at ', itoa(interval), ' second intervals.'";
 	} else {
 		send_string 0, '>>>> RMS HEARTATTACK :: heart attack done. Lets not do that any time again soon.';

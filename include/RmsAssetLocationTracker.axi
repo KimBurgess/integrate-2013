@@ -12,9 +12,8 @@ PROGRAM_NAME='assetLocationTracker'
 #DEFINE INCLUDE_RMS_EVENT_ASSET_LOCATION_CALLBACK
 
 
-#INCLUDE 'RmsApiAux'
-#INCLUDE 'RmsEventListener'
-#INCLUDE 'RmsEventListenerAux'
+#INCLUDE 'RmsExtendedApi'
+#INCLUDE 'RmsExtendedEventListener'
 
 
 define_type

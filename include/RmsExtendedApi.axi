@@ -1,8 +1,9 @@
-PROGRAM_NAME='RmsApiAux'
+PROGRAM_NAME='RmsExtendedApi'
 
 
-#IF_NOT_DEFINED __RMS_API_AUX__
-#DEFINE __RMS_API_AUX__
+#IF_NOT_DEFINED __RMS_EXTENDED_API__
+#DEFINE __RMS_EXTENDED_API__
+
 
 #INCLUDE 'RmsApi'
 
@@ -22,7 +23,7 @@ define_function char RmsAssetLocationRequest(char assetClientKey[]) {
 	stack_var char rmsCommand[RMS_MAX_CMD_LEN];
 
 	if (assetClientKey == '') {
-		send_string 0, '>>>> RMS API AUX ERROR <RmsAssetLocationRequest> :: missing asset client key';
+		send_string 0, '>>>> RMS EXTENDED API ERROR <RmsAssetLocationRequest> :: missing asset client key';
 		return false;
 	}
 
@@ -51,17 +52,17 @@ define_function char RmsEmail(char address[],
 	stack_var char rmsCommand[RMS_MAX_CMD_LEN];
 
 	if (address == '') {
-		send_string 0, '>>>> RMS API AUX ERROR <RmsEmail> :: missing address';
+		send_string 0, '>>>> RMS EXTENDED API ERROR <RmsEmail> :: missing address';
 		return false;
 	}
 
 	if (subject == '') {
-		send_string 0, '>>>> RMS API AUX ERROR <RmsEmail> :: missing subject';
+		send_string 0, '>>>> RMS EXTENDED API ERROR <RmsEmail> :: missing subject';
 		return false;
 	}
 
 	if (body == '') {
-		send_string 0, '>>>> RMS API AUX ERROR <RmsEmail> :: missing body';
+		send_string 0, '>>>> RMS EXTENDED API ERROR <RmsEmail> :: missing body';
 		return false;
 	}
 
@@ -88,7 +89,7 @@ define_function char RmsRetrieveClientMessages() {
 	stack_var char rmsCommand[RMS_MAX_CMD_LEN];
 
 	if (![vdvRMS, RMS_CHANNEL_CLIENT_ONLINE]) {
-		send_string 0, '>>>> RMS API AUX ERROR <RmsRetrieveClientMessages> :: client is currently offline';
+		send_string 0, '>>>> RMS EXTENDED API ERROR <RmsRetrieveClientMessages> :: client is currently offline';
 		return false;
 	}
 
@@ -98,4 +99,4 @@ define_function char RmsRetrieveClientMessages() {
 }
 
 
-#END_IF // __RMS_API_AUX__
+#END_IF // __RMS_EXTENDED_API__
