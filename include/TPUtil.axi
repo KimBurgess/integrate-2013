@@ -53,7 +53,7 @@ define_function setPage(dev tp[], char name[]) {
  * @param	origin		the animation origin poin
  * @param	time		the animation time
  */
-define_function setPageAnimated(dev tp[],
+define_function setPageAnimated(dev tp,
 		char name[],
 		char anim[],
 		integer origin,
