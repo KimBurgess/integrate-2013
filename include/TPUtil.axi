@@ -8,20 +8,30 @@ program_name = 'TPUtil'
  * Shows a popup page.
  *
  * @param	tp			the device to show the popup page on
- * @param	name		the name of the popup page to show
+ * @param	popupName	the name of the popup page to show
+ * @param	pageName	the name of the page to show the popup on
  */
-define_function showPopup(dev tp, char name[]) {
-	send_command tp, "'@PPN-', name"
+define_function showPopup(dev tp, char popupName[], char pageName[]) {
+	if (pagename) {
+		send_command tp, "'@PPN-', popupName, ';', pageName"
+	} else {
+		send_command tp, "'@PPN-', popupName"
+	}
 }
 
 /**
  * Hides a popup page.
  *
  * @param	tp			the device to hide the popup page on
- * @param	name		the name of the popup page to hide
+ * @param	popupName	the name of the popup page to show
+ * @param	pageName	the name of the page to show the popup on
  */
-define_function hidePopup(dev tp, char name[]) {
-	send_command tp, "'@PPF-', name"
+define_function hidePopup(dev tp, char popupName[], char pageName[]) {
+	if (pagename) {
+		send_command tp, "'@PPF-', popupName, ';', pageName"
+	} else {
+		send_command tp, "'@PPF-', popupName"
+	}
 }
 
 /**

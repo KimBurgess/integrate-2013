@@ -1,4 +1,4 @@
-MODULE_NAME='RmsExtendedClientGui'(dev vdvRMS, dev dvTp, dev dvTpBase, integer initialLocation)
+MODULE_NAME='RmsExtendedClientGui'(dev vdvRMS, dev dvTp, dev dvTpBase, long initialLocation)
 
 
 #DEFINE INCLUDE_SCHEDULING_NEXT_ACTIVE_RESPONSE_CALLBACK
@@ -7,16 +7,14 @@ MODULE_NAME='RmsExtendedClientGui'(dev vdvRMS, dev dvTp, dev dvTpBase, integer i
 #DEFINE INCLUDE_SCHEDULING_ACTIVE_UPDATED_CALLBACK
 #DEFINE INCLUDE_SCHEDULING_EVENT_ENDED_CALLBACK
 #DEFINE INCLUDE_SCHEDULING_EVENT_STARTED_CALLBACK
-#DEFINE INCLUDE_SCHEDULING_CREATE_RESPONSE_CALLBACK
 
 
 #INCLUDE 'TPUtil'
 #INCLUDE 'TimeUtil'
-#INCLUDE 'string'
+#INCLUDE 'RmsBookingUserAssociation'
 #INCLUDE 'RmsAssetLocationTracker'
 #INCLUDE 'RmsSchedulingApi'
 #INCLUDE 'RmsSchedulingEventListener'
-#INCLUDE 'User'
 
 
 define_type
@@ -37,20 +35,14 @@ constant integer MEETING_TIME_DELTA_VIEW_ADDRESS = 4;
 constant integer MEETING_DETAILS_VIEW_ADDREss = 5;
 constant integer MEETING_HEADER_VIEW_ADDREss = 6;
 
+constant char RMS_SCHEDULING_PAGE[] = 'rmsSchedulingPage';
 constant char MEETING_INFO_VIEW_NAME[] = 'rmsMeetingInfoCard';
 constant char IN_USE_INDICATOR_VIEW_NAME[] = 'rmsInUseIndicator';
 constant char AVAILABILITY_GUIDE_VIEW_NAME[] = 'rmsAvailabilityGuide';
 constant char CALENDAR_VIEW_NAME[] = 'rmsCalendar';
 constant char NFC_TOUCH_ON_VIEW_NAME[] = 'nfcTouchOn';
 
-constant char NFC_BOOKING_NAME_PLACEHOLDER[] = '<name>';
-constant char NFC_BOOKING_DESCRIPTION_EXTERNAL[] = 'Ad-hoc meeting created by <name> from the touch panel.';
-constant char NFC_BOOKING_DESCRIPTION_INTERNAL[] = 'Ad-hoc meeting';
-
 volatile locationInfo uiLocation;
-
-volatile userData activeUser;
-
 
 
 /**
@@ -63,54 +55,37 @@ define_function init() {
 /**
  * Render the appropriate popups and page elements for the current system state.
  */
-define_function render() {
+define_function redraw() {
 	select {
 
-		active (userIsNull(activeUser) && uiLocation.isInUse): {
+		// Active meeting
+		active (uiLocation.isInUse): {
 			updateMeetingInfoView(uiLocation.activeBooking, false);
 
-			hidePopup(dvTp, CALENDAR_VIEW_NAME);
-
-			showPopup(dvTp, IN_USE_INDICATOR_VIEW_NAME);
-			showPopup(dvTp, MEETING_INFO_VIEW_NAME);
-			showPopup(dvTp, AVAILABILITY_GUIDE_VIEW_NAME);
-			showPopup(dvTp, NFC_TOUCH_ON_VIEW_NAME);
+			showPopup(dvTp, IN_USE_INDICATOR_VIEW_NAME, RMS_SCHEDULING_PAGE);
+			showPopup(dvTp, MEETING_INFO_VIEW_NAME, RMS_SCHEDULING_PAGE);
+			showPopup(dvTp, AVAILABILITY_GUIDE_VIEW_NAME, RMS_SCHEDULING_PAGE);
+			showPopup(dvTp, NFC_TOUCH_ON_VIEW_NAME, RMS_SCHEDULING_PAGE);
 		}
 
-		active (userIsNull(activeUser) &&
-				!uiLocation.isInUse &&
+		// No meeting and no more bookings in the calendar
+		active (!uiLocation.isInUse &&
 				uiLocation.nextBooking.bookingId == uiLocation.activeBooking.bookingId): {
-			hidePopup(dvTp, CALENDAR_VIEW_NAME);
-			hidePopup(dvTp, MEETING_INFO_VIEW_NAME);
+			hidePopup(dvTp, MEETING_INFO_VIEW_NAME, RMS_SCHEDULING_PAGE);
 
-			showPopup(dvTp, IN_USE_INDICATOR_VIEW_NAME);
-			showPopup(dvTp, AVAILABILITY_GUIDE_VIEW_NAME);
-			showPopup(dvTp, NFC_TOUCH_ON_VIEW_NAME);
+			showPopup(dvTp, IN_USE_INDICATOR_VIEW_NAME, RMS_SCHEDULING_PAGE);
+			showPopup(dvTp, AVAILABILITY_GUIDE_VIEW_NAME, RMS_SCHEDULING_PAGE);
+			showPopup(dvTp, NFC_TOUCH_ON_VIEW_NAME, RMS_SCHEDULING_PAGE);
 		}
 
-		active (userIsNull(activeUser) && !uiLocation.isInUse): {
+		// Room available
+		active (!uiLocation.isInUse): {
 			updateMeetingInfoView(uiLocation.nextBooking, true);
 
-			hidePopup(dvTp, CALENDAR_VIEW_NAME);
-
-			showPopup(dvTp, IN_USE_INDICATOR_VIEW_NAME);
-			showPopup(dvTp, MEETING_INFO_VIEW_NAME);
-			showPopup(dvTp, AVAILABILITY_GUIDE_VIEW_NAME);
-			showPopup(dvTp, NFC_TOUCH_ON_VIEW_NAME);
-		}
-
-		active (1): {
-			hidePopup(dvTp, IN_USE_INDICATOR_VIEW_NAME);
-			hidePopup(dvTp, MEETING_INFO_VIEW_NAME);
-			hidePopup(dvTp, AVAILABILITY_GUIDE_VIEW_NAME);
-			hidePopup(dvTp, NFC_TOUCH_ON_VIEW_NAME);
-
-			showPopup(dvTp, CALENDAR_VIEW_NAME);
-			// TODO nuke all this from here and just show the calendar popup
-			// as a component of the NFC login process
-
-			// TODO show user image
-			// TODO show user welcome
+			showPopup(dvTp, IN_USE_INDICATOR_VIEW_NAME, RMS_SCHEDULING_PAGE);
+			showPopup(dvTp, MEETING_INFO_VIEW_NAME, RMS_SCHEDULING_PAGE);
+			showPopup(dvTp, AVAILABILITY_GUIDE_VIEW_NAME, RMS_SCHEDULING_PAGE);
+			showPopup(dvTp, NFC_TOUCH_ON_VIEW_NAME, RMS_SCHEDULING_PAGE);
 		}
 
 	}
@@ -146,47 +121,6 @@ define_function updateMeetingInfoView(RmsEventBookingResponse booking,
 
 }
 
-define_function sendBookingConfirmation(char emailAddress[],
-		RmsEventBookingResponse booking) {
-	RmsEmail(emailAddress,
-			'RMS Room Booking Confirmation',
-			"'This is some placeholder text. But I can tell you your booking was called: ', booking.subject, '.'",
-			'',
-			'');
-}
-
-/**
- * Extract the addition RMS user information that is iserted into a booking
- * description for reservations made with an NFC card.
- *
- * WARNING: as RMS cannot return type this function has a side effect on the
- * passed booking object.
- *
- * @param	booking			an RmsEventBookingResponse containing the booking
- *							data
- * @return					a boolean, true if a user was extracted
- */
-define_function char extractRmsUser(RmsEventBookingResponse booking) {
-	stack_var char left[256];
-	stack_var char right[256];
-	stack_var char name[64];
-
-	left = string_get_key(NFC_BOOKING_DESCRIPTION_EXTERNAL,
-			NFC_BOOKING_NAME_PLACEHOLDER);
-	right = string_get_value(NFC_BOOKING_DESCRIPTION_EXTERNAL,
-			NFC_BOOKING_NAME_PLACEHOLDER);
-	name = string_get_between(booking.details, left, right);
-
-	if (name == '') {
-		return false;
-	}
-
-	booking.organizer = name;
-	booking.details = NFC_BOOKING_DESCRIPTION_INTERNAL;
-
-	return true;
-}
-
 /**
  * Sets the room available state.
  *
@@ -194,7 +128,7 @@ define_function char extractRmsUser(RmsEventBookingResponse booking) {
  */
 define_function setInUse(char isInUse) {
 	uiLocation.isInUse = isInUse;
-	render();
+	redraw();
 }
 
 /**
@@ -204,9 +138,9 @@ define_function setInUse(char isInUse) {
  *						data
  */
 define_function setActiveMeetingInfo(RmsEventBookingResponse booking) {
-	extractRmsUser(booking);
+	extractUserDetails(booking);
 	uiLocation.activeBooking = booking;
-	render();
+	redraw();
 }
 
 /**
@@ -216,9 +150,9 @@ define_function setActiveMeetingInfo(RmsEventBookingResponse booking) {
  *						data
  */
 define_function setNextMeetingInfo(RmsEventBookingResponse booking) {
-	extractRmsUser(booking);
+	extractUserDetails(booking);
 	uiLocation.nextBooking = booking;
-	render();
+	redraw();
 }
 
 
@@ -274,21 +208,6 @@ define_function RmsEventSchedulingEventStarted(CHAR bookingId[],
 	}
 }
 
-define_function RmsEventSchedulingCreateResponse(char isDefaultLocation,
-		char responseText[],
-		RmsEventBookingResponse eventBookingResponse) {
-	if (eventBookingResponse.location = locationTracker.locationId) {
-
-		if (eventBookingResponse.isSuccessful && !userIsNull(activeUser)) {
-			sendBookingConfirmation(activeUser.email, eventBookingResponse);
-		}
-
-	// TODO as this fires waaaaaay before any of the next meeting update
-	// events check if this replaces the next active event and update the UI
-	// accordingly.
-	}
-}
-
 
 define_start
 
@@ -300,16 +219,7 @@ define_event
 data_event[dvTp] {
 
 	online: {
-		render();
+		redraw();
 	}
 
-}
-
-
-
-
-#WARN 'Temporary render() trigger for debugging'
-define_event
-button_event[dvTp,999] {
-	push: render();
 }

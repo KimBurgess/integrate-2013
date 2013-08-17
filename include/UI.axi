@@ -20,7 +20,7 @@ volatile dev rmsTp[] = {
 	dvBoardroomSchedulingTp
 };
 
-// touch panel RMS location ID's
+// touch panel RMS location ID's (temp only due to bug in SDK v4.1.13)
 volatile integer rmsLocationBoardroom = 29;
 
 
@@ -28,6 +28,7 @@ define_module 'RmsClientGui_dr4_0_0' mdlRmsGui(vdvRmsGui, rmsTpRms, rmsTp);
 
 define_module 'RmsExtendedClientGui' mdlRmsGuiBoardroom(vdvRMS, dvBoardroomSchedulingTpRmsExtended, dvBoardroomSchedulingTp, rmsLocationBoardroom);
 
+define_module 'RmsNfcBooking' mldRmsNfcBookingBoardroom(vdvRMS, dvBoardroomSchedulingTpRmsNfc, dvBoardroomSchedulingTp, rmsLocationBoardroom)
 
 define_event
 
