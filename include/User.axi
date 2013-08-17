@@ -5,9 +5,8 @@ define_type
 
 structure UserData {
 	char uid[64];
-	char firstName[32];
-	char lastName[32];
-	char emailAddress[128];
+	char name[64];
+	char email[256];
 }
 
 
@@ -25,9 +24,8 @@ volatile UserData nullUser;
  */
 define_function char userIsEqual(UserData user1, UserData user2) {
 	return user1.uid == user2.uid &&
-			user1.firstName == user2.firstName &&
-			user1.lastName == user2.lastName &&
-			user1.emailAddress == user2.emailAddress;
+			user1.name == user2.name &&
+			user1.email == user2.email;
 }
 
 /**

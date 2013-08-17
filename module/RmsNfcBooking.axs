@@ -2,6 +2,7 @@ MODULE_NAME='RmsNfcBooking'(dev vdvRMS, dev dvTp, dev dvTpBase, integer tempLoca
 
 
 #DEFINE INCLUDE_SCHEDULING_CREATE_RESPONSE_CALLBACK
+#DEFINE INCLUDE_NFC_TAG_READ_CALLBACK
 
 
 #INCLUDE 'TPUtil'
@@ -9,9 +10,15 @@ MODULE_NAME='RmsNfcBooking'(dev vdvRMS, dev dvTp, dev dvTpBase, integer tempLoca
 #INCLUDE 'RmsBookingUserAssociation'
 #INCLUDE 'RmsAssetLocationTracker'
 #INCLUDE 'RmsSchedulingEventListener'
+#INCLUDE 'NfcListener'
 
 
 define_variable
+
+constant char NFC_PAGE_NAME[] = 'nfcAuthed';
+constant char RMS_PAGE_NAME[] = 'rmsSchedulingPage';
+
+constant char CALENDAR_VIEW_NAME[] = 'rmsCalendar';
 
 volatile UserData activeUser;
 
@@ -21,6 +28,41 @@ volatile UserData activeUser;
  */
 define_function init() {
 	setLocationTrackerAsset(RmsDevToString(dvTpBase));
+}
+
+define_function redraw() {
+	select {
+	
+		// someone nobody logged in
+		active (userIsNull(activeUser)): {
+			setPageAnimated(dvTpBase, RMS_PAGE_NAME, 'fade', 0, 2);
+		}
+	
+		// we have an authed user
+		active (!userIsNull(activeUser)): {
+			setPageAnimated(dvTpBase, NFC_PAGE_NAME, 'fade', 0, 2);
+			showPopup(dvTpBase, CALENDAR_VIEW_NAME, NFC_PAGE_NAME);
+		}
+	
+	}
+}
+
+define_function authenticate(char uid[]) {
+	stack_var UserData testUser;
+
+	testUser.uid = '1234';
+	testUser.name = 'Kim Burgess';
+	testUser.email = 'kim.burgess@amxaustralia.com.au';
+
+	activeUser = testUser;
+
+	redraw();
+}
+
+define_function logout() {
+	activeUser = nullUser;
+
+	redraw();
 }
 
 define_function sendBookingConfirmation(UserData user,
@@ -43,7 +85,7 @@ define_function sendBookingConfirmation(UserData user,
 			'This booking was created from the scheduling touch panel. If you ',
 			'did not create this please contact your system administrator.'";
 	
-	RmsEmail(user.emailAddress, subject, msg, '', '');
+	RmsEmail(user.email, subject, msg, '', '');
 }
 
 
@@ -63,6 +105,26 @@ define_function RmsEventSchedulingCreateResponse(char isDefaultLocation,
 }
 
 
+// NFC callbacks
+
+define_function NfcTagRead(integer tagType, char uid[], integer uidLength) {
+	if (userIsNull(activeUser)) {
+		authenticate(uid);
+	}
+}
+
+
 define_start
 
 init();
+
+
+define_event
+
+button_event[dvTp, 1] {
+
+	push: {
+		logout();
+	}
+
+}

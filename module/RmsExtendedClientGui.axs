@@ -40,7 +40,6 @@ constant char MEETING_INFO_VIEW_NAME[] = 'rmsMeetingInfoCard';
 constant char IN_USE_INDICATOR_VIEW_NAME[] = 'rmsInUseIndicator';
 constant char AVAILABILITY_GUIDE_VIEW_NAME[] = 'rmsAvailabilityGuide';
 constant char CALENDAR_VIEW_NAME[] = 'rmsCalendar';
-constant char NFC_TOUCH_ON_VIEW_NAME[] = 'nfcTouchOn';
 
 volatile locationInfo uiLocation;
 
@@ -65,7 +64,6 @@ define_function redraw() {
 			showPopup(dvTp, IN_USE_INDICATOR_VIEW_NAME, RMS_SCHEDULING_PAGE);
 			showPopup(dvTp, MEETING_INFO_VIEW_NAME, RMS_SCHEDULING_PAGE);
 			showPopup(dvTp, AVAILABILITY_GUIDE_VIEW_NAME, RMS_SCHEDULING_PAGE);
-			showPopup(dvTp, NFC_TOUCH_ON_VIEW_NAME, RMS_SCHEDULING_PAGE);
 		}
 
 		// No meeting and no more bookings in the calendar
@@ -75,7 +73,6 @@ define_function redraw() {
 
 			showPopup(dvTp, IN_USE_INDICATOR_VIEW_NAME, RMS_SCHEDULING_PAGE);
 			showPopup(dvTp, AVAILABILITY_GUIDE_VIEW_NAME, RMS_SCHEDULING_PAGE);
-			showPopup(dvTp, NFC_TOUCH_ON_VIEW_NAME, RMS_SCHEDULING_PAGE);
 		}
 
 		// Room available
@@ -85,7 +82,6 @@ define_function redraw() {
 			showPopup(dvTp, IN_USE_INDICATOR_VIEW_NAME, RMS_SCHEDULING_PAGE);
 			showPopup(dvTp, MEETING_INFO_VIEW_NAME, RMS_SCHEDULING_PAGE);
 			showPopup(dvTp, AVAILABILITY_GUIDE_VIEW_NAME, RMS_SCHEDULING_PAGE);
-			showPopup(dvTp, NFC_TOUCH_ON_VIEW_NAME, RMS_SCHEDULING_PAGE);
 		}
 
 	}
