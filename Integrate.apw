@@ -130,20 +130,12 @@
 <UserName></UserName>
 <Password></Password>
 <Comments></Comments>
-<File CompileType="None" Type="Include"><Identifier>Devices</Identifier>
-<FilePathName>include\Devices.axi</FilePathName>
-<Comments></Comments>
-</File>
 <File CompileType="None" Type="Include"><Identifier>RmsAssetLocationTracker</Identifier>
 <FilePathName>include\RmsAssetLocationTracker.axi</FilePathName>
 <Comments></Comments>
 </File>
 <File CompileType="None" Type="Include"><Identifier>RmsBookingUserAssociation</Identifier>
 <FilePathName>include\RmsBookingUserAssociation.axi</FilePathName>
-<Comments></Comments>
-</File>
-<File CompileType="None" Type="Include"><Identifier>RmsCore</Identifier>
-<FilePathName>include\RmsCore.axi</FilePathName>
 <Comments></Comments>
 </File>
 <File CompileType="None" Type="Include"><Identifier>RmsExtendedApi</Identifier>
@@ -160,10 +152,6 @@
 </File>
 <File CompileType="None" Type="Include"><Identifier>TPUtil</Identifier>
 <FilePathName>include\TPUtil.axi</FilePathName>
-<Comments></Comments>
-</File>
-<File CompileType="None" Type="Include"><Identifier>UI</Identifier>
-<FilePathName>include\UI.axi</FilePathName>
 <Comments></Comments>
 </File>
 <File CompileType="None" Type="Include"><Identifier>User</Identifier>
