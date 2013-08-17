@@ -14,6 +14,40 @@ RMS_EVENT_ASSET_LOCATION = 'ASSET.LOCATION';
 
 
 /**
+ * This is the same as the stock RmsPackCmdParam(..) however it also wraps the
+ * param in quotes so that line breaks are handled nicely.
+ */
+define_function char[RMS_MAX_CMD_LEN] RmsPackCmdParamQuoted(char cmd[],
+		char param[]) {
+	stack_var char tmp[RMS_MAX_CMD_LEN];
+	stack_var char tmpParam[RMS_MAX_CMD_LEN];
+	stack_var char cmdSep[1];
+	stack_var char paramSep[1];
+	stack_var integer i;
+	cmdSep = '-';
+	paramSep = ',';
+
+	// Not the first param?  Add the param separator
+	tmp = cmd;
+	if (find_string(cmd, cmdSep,1) != (length_string(cmd) - length_string(cmdSep) + 1)) {
+		tmp = "tmp, paramSep";
+	}
+	
+	// Escape any quotes
+	for (i = 1; i <= length_string(param); i++) {
+		if (param[i] == '"') {
+			tmpParam = "tmpParam,'"'";
+		}
+		tmpParam = "tmpParam,param[i]"
+	}
+
+	// Wrap in double quotes
+	tmp = "tmp,'"',tmpParam,'"'";
+
+	return tmp;
+}
+
+/**
  * Queries the current location of an asset.
  *
  * @param	assetClientKey	a string containing the client key query
@@ -68,11 +102,11 @@ define_function char RmsEmail(char address[],
 
 	// submit the email
 	rmsCommand = RmsPackCmdHeader('MESSAGE.EMAIL');
-	rmsCommand = RmsPackCmdParam(rmsCommand,address);
-	rmsCommand = RmsPackCmdParam(rmsCommand,subject);
-	rmsCommand = RmsPackCmdParam(rmsCommand,body);
-	rmsCommand = RmsPackCmdParam(rmsCommand,cc);
-	rmsCommand = RmsPackCmdParam(rmsCommand,bcc);
+	rmsCommand = RmsPackCmdParam(rmsCommand, address);
+	rmsCommand = RmsPackCmdParamQuoted(rmsCommand, subject);
+	rmsCommand = RmsPackCmdParamQuoted(rmsCommand, body);
+	rmsCommand = RmsPackCmdParam(rmsCommand, cc);
+	rmsCommand = RmsPackCmdParam(rmsCommand, bcc);
 	send_command vdvRMS, rmsCommand;
 
 	return true;

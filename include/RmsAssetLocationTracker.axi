@@ -1,10 +1,10 @@
-PROGRAM_NAME='assetLocationTracker'
+PROGRAM_NAME='RmsAssetLocationTracker'
 
 
-#IF_DEFINED __ASSET_LOCATION_TRACKER__
-#WARN 'AssetLocationTracker already in use for this scope'
+#IF_DEFINED __RMS_ASSET_LOCATION_TRACKER__
+#WARN 'RmsAssetLocationTracker already in use for this scope'
 #ELSE
-#DEFINE __ASSET_LOCATION_TRACKER__
+#DEFINE __RMS_ASSET_LOCATION_TRACKER__
 
 
 #DEFINE INCLUDE_RMS_EVENT_ASSET_REGISTERED_CALLBACK
@@ -19,8 +19,8 @@ PROGRAM_NAME='assetLocationTracker'
 define_type
 
 structure assetLocationnTracker {
-	long locationId;
 	char assetClientKey[50];
+	RmsLocation location;
 }
 
 define_variable
@@ -52,19 +52,20 @@ define_function RmsEventAssetRegistered(char registeredAssetClientKey[],
 
 define_function RmsEventAssetRelocated(char assetClientKey[],
 		long assetId,
-		long newLocationId) {
+		integer newLocationId) {
 	if (assetClientKey == locationTracker.assetClientKey) {
-		locationTracker.locationId = newLocationId;
+		RmsAssetLocationRequest(locationTracker.assetClientKey)
 	}
 }
 
 define_function RmsEventAssetLocation(char assetClientKey[], RmsLocation location) {
 	/*if (assetClientKey == locatioTracker.assetClientKey) {
-		uiLocation.id = location.id;
+		locationTracker.location = location;
 	}*/
 	#WARN 'As we cannot currently associate an ?ASSET.LOCATION response with a device this is a hard coded hack'
-	locationTracker.locationId = initialLocation;
+	locationTracker.location.id = tempLocationId;
+	locationTracker.location.name = tempLocationName
 }
 
 
-#END_IF // __ASSET_LOCATION_TRACKER__
+#END_IF // __RMS_ASSET_LOCATION_TRACKER__

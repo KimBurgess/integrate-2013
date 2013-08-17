@@ -7,7 +7,7 @@ structure UserData {
 	char uid[64];
 	char firstName[32];
 	char lastName[32];
-	char email[128];
+	char emailAddress[128];
 }
 
 
@@ -27,7 +27,7 @@ define_function char userIsEqual(UserData user1, UserData user2) {
 	return user1.uid == user2.uid &&
 			user1.firstName == user2.firstName &&
 			user1.lastName == user2.lastName &&
-			user1.email == user2.email;
+			user1.emailAddress == user2.emailAddress;
 }
 
 /**

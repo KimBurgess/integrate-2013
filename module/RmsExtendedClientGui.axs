@@ -1,4 +1,4 @@
-MODULE_NAME='RmsExtendedClientGui'(dev vdvRMS, dev dvTp, dev dvTpBase, long initialLocation)
+MODULE_NAME='RmsExtendedClientGui'(dev vdvRMS, dev dvTp, dev dvTpBase, integer tempLocationId, char tempLocationName[50])
 
 
 #DEFINE INCLUDE_SCHEDULING_NEXT_ACTIVE_RESPONSE_CALLBACK
@@ -163,7 +163,7 @@ define_function RmsEventSchedulingNextActiveResponse(char isDefaultLocation,
 		integer recordCount,
 		char bookingId[],
 		RmsEventBookingResponse eventBookingResponse) {
-	if (eventBookingResponse.location == locationTracker.locationId) {
+	if (eventBookingResponse.location == locationTracker.location.id) {
 		setNextMeetingInfo(eventBookingResponse);
 	}
 }
@@ -173,7 +173,7 @@ define_function RmsEventSchedulingActiveResponse(char isDefaultLocation,
 		integer recordCount,
 		char bookingId[],
 		RmsEventBookingResponse eventBookingResponse) {
-	if (eventBookingResponse.location == locationTracker.locationId) {
+	if (eventBookingResponse.location == locationTracker.location.id) {
 		setActiveMeetingInfo(eventBookingResponse);
 		setInUse(true);
 	}
@@ -181,14 +181,14 @@ define_function RmsEventSchedulingActiveResponse(char isDefaultLocation,
 
 define_function RmsEventSchedulingNextActiveUpdated(char bookingId[],
 		RmsEventBookingResponse eventBookingResponse) {
-	if (eventBookingResponse.location == locationTracker.locationId) {
+	if (eventBookingResponse.location == locationTracker.location.id) {
 		setNextMeetingInfo(eventBookingResponse);
 	}
 }
 
 define_function RmsEventSchedulingActiveUpdated(char bookingId[],
 		RmsEventBookingResponse eventBookingResponse) {
-	if (eventBookingResponse.location == locationTracker.locationId) {
+	if (eventBookingResponse.location == locationTracker.location.id) {
 		setActiveMeetingInfo(eventBookingResponse);
 		setInUse(true);
 	}
@@ -196,14 +196,14 @@ define_function RmsEventSchedulingActiveUpdated(char bookingId[],
 
 define_function RmsEventSchedulingEventEnded(CHAR bookingId[],
 		RmsEventBookingResponse eventBookingResponse) {
-	if (eventBookingResponse.location == locationTracker.locationId) {
+	if (eventBookingResponse.location == locationTracker.location.id) {
 		setInUse(false);
 	}
 }
 
 define_function RmsEventSchedulingEventStarted(CHAR bookingId[],
 		RmsEventBookingResponse eventBookingResponse) {
-	if (eventBookingResponse.location == locationTracker.locationId) {
+	if (eventBookingResponse.location == locationTracker.location.id) {
 		setInUse(true);
 	}
 }

@@ -20,15 +20,16 @@ volatile dev rmsTp[] = {
 	dvBoardroomSchedulingTp
 };
 
-// touch panel RMS location ID's (temp only due to bug in SDK v4.1.13)
-volatile integer rmsLocationBoardroom = 29;
+// touch panel RMS location information (temp only due to bug in SDK v4.1.13)
+volatile integer rmsLocationBoardroomId = 29;
+volatile char rmsLocationBoardroomName[] = 'Integrate Boardroom';
 
 
 define_module 'RmsClientGui_dr4_0_0' mdlRmsGui(vdvRmsGui, rmsTpRms, rmsTp);
 
-define_module 'RmsExtendedClientGui' mdlRmsGuiBoardroom(vdvRMS, dvBoardroomSchedulingTpRmsExtended, dvBoardroomSchedulingTp, rmsLocationBoardroom);
+define_module 'RmsExtendedClientGui' mdlRmsGuiBoardroom(vdvRMS, dvBoardroomSchedulingTpRmsExtended, dvBoardroomSchedulingTp, rmsLocationBoardroomId, rmsLocationBoardroomName);
 
-define_module 'RmsNfcBooking' mldRmsNfcBookingBoardroom(vdvRMS, dvBoardroomSchedulingTpRmsNfc, dvBoardroomSchedulingTp, rmsLocationBoardroom)
+define_module 'RmsNfcBooking' mldRmsNfcBookingBoardroom(vdvRMS, dvBoardroomSchedulingTpRmsNfc, dvBoardroomSchedulingTp, rmsLocationBoardroomId, rmsLocationBoardroomName)
 
 define_event
 
