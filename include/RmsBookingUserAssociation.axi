@@ -13,8 +13,8 @@ PROGRAM_NAME='RmsBookingUserAssociation'
 define_variable
 
 constant char NFC_BOOKING_NAME_PLACEHOLDER[] = '<name>';
-constant char NFC_BOOKING_DESCRIPTION_EXTERNAL[] = 'Ad-hoc meeting created by <name> from the touch panel.';
-constant char NFC_BOOKING_DESCRIPTION_INTERNAL[] = 'Ad-hoc meeting';
+constant char NFC_BOOKING_DESCRIPTION_EXTERNAL[] = 'Ad-hoc meeting created by <name> from touch panel booking system.';
+constant char NFC_BOOKING_DESCRIPTION_INTERNAL[] = 'Ad-hoc meeting created from touch panel booking system.';
 
 
 
@@ -50,9 +50,29 @@ define_function char extractUserDetails(RmsEventBookingResponse booking) {
 	return true;
 }
 
-define_function char insertUserDetails(RmsEventBookingResponse booking, UserData user) {
-	// TODO inject user info into booking
-	return false;
+define_function char[1024] insertUserDetails(char details[], UserData user) {
+	stack_var char CRLF[2];
+	stack_var char left[256];
+	stack_var char right[256];
+	stack_var char ret[1024];
+
+	if (userIsNull(user)) {
+		return '';
+	}
+	
+	CRLF = "$0A, $0D";
+	left = string_get_key(NFC_BOOKING_DESCRIPTION_EXTERNAL,
+			NFC_BOOKING_NAME_PLACEHOLDER);
+	right = string_get_value(NFC_BOOKING_DESCRIPTION_EXTERNAL,
+			NFC_BOOKING_NAME_PLACEHOLDER);
+
+	if (details) {
+		ret = "details, CRLF, CRLF, left, user.name, right";
+	} else {
+		ret = "left, user.name, right";
+	}
+
+	return ret;
 }
 
 #END_IF // __RMS_BOOKING_USER_ASSOCIATION__
