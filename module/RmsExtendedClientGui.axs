@@ -25,6 +25,7 @@ define_type
 
 structure locationInfo {
 	char isInUse;
+	char hasMoreBookings;
 	RmsEventBookingResponse activeBooking;
 	RmsEventBookingResponse nextBooking;
 }
@@ -79,7 +80,7 @@ define_function redraw() {
 
 	// No user currently authed
 	if (userIsNull(activeUser)) {
-	
+
 		// Hide all the stuff you need to be authed for
 		hidePopupEx(dvTpBase, RMS_CALENDAR_VIEW_NAME, RMS_SCHEDULING_PAGE);
 		hidePopupEx(dvTpBase, RMS_MEETING_DETAILS_VIEW_NAME, RMS_SCHEDULING_PAGE);
@@ -103,11 +104,10 @@ define_function redraw() {
 				showPopupEx(dvTpBase, MEETING_INFO_VIEW_NAME, RMS_SCHEDULING_PAGE);
 			}
 
-			active (!uiLocation.isInUse &&
-				uiLocation.nextBooking.bookingId == uiLocation.activeBooking.bookingId): {
+			active (!uiLocation.isInUse && !uiLocationHasMoreBookings()): {
 				hidePopupEx(dvTpBase, MEETING_INFO_VIEW_NAME, RMS_SCHEDULING_PAGE);
 			}
-			
+
 			active (!uiLocation.isInUse): {
 				updateMeetingInfoView(uiLocation.nextBooking, true);
 				showPopupEx(dvTpBase, MEETING_INFO_VIEW_NAME, RMS_SCHEDULING_PAGE);
@@ -116,7 +116,7 @@ define_function redraw() {
 
 	// We have a human (or a goat with an NFC chip)
 	} else {
-	
+
 		// Only update this view on a user change to prevent issue with popup
 		// ordering
 		if (userIsEqual(activeUser, lastUser)) {
@@ -133,11 +133,11 @@ define_function redraw() {
 
 		// And show the authed content
 		showPopupEx(dvTpBase, NFC_LOGOUT_VIEW_NAME, RMS_SCHEDULING_PAGE);
-		
+
 		// If we've got time for a 'meet now' before the next meeting give the
 		// option, otherwise just skip straight to the calendar
 		if ((uiLocation.nextBooking.minutesUntilStart > MEET_NOW_TIME ||
-				uiLocation.nextBooking.bookingId == uiLocation.activeBooking.bookingId) &&
+				!uiLocationHasMoreBookings()) &&
 				!uiLocation.isInUse) {
 			showPopupEx(dvTpBase, NFC_HOME_VIEW_NAME, RMS_SCHEDULING_PAGE);
 			showPopupEx(dvTpBase, NFC_USER_WELCOME_VIEW_NAME, RMS_SCHEDULING_PAGE);
@@ -268,11 +268,11 @@ define_function sendBookingConfirmation(UserData user,
 	stack_var char CRLF[2];
 	stack_var char msg[1024];
 	stack_var char subject[256];
-	
+
 	CRLF = "$0D, $0A";
-	
+
 	subject = 'RMS Room Booking Confirmation';
-	
+
 	msg = "'You', $27 , 're booking for ', locationTracker.location.name, ' has been confirmed.', CRLF,
 			CRLF,
 			'Booking details:', CRLF,
@@ -282,7 +282,7 @@ define_function sendBookingConfirmation(UserData user,
 			CRLF,
 			'This booking was created from the touch panel booking system. If ',
 			'you did not create this please contact your system administrator.'";
-	
+
 	RmsEmail(user.email, subject, msg, '', '');
 }
 
@@ -296,6 +296,17 @@ define_function meetNow() {
 			'Ad-hoc meeting',
 			insertUserDetails('', activeUser),
 			locationTracker.location.id);
+}
+
+/**
+ * Check if there are any more known bookings within the scheduling sync window
+ * for the ui location.
+ *
+ * @return				a boolean, true if there is another know booking
+ */
+define_function char uiLocationHasMoreBookings() {
+	return (uiLocation.nextBooking.bookingId == uiLocation.activeBooking.bookingId) ||
+			uiLocation.nextBooking.bookingId = '';
 }
 
 
@@ -364,7 +375,7 @@ define_function RmsEventSchedulingCreateResponse(char isDefaultLocation,
 	}
 }
 
- 
+
 // NFC callbacks
 
 define_function NfcTagRead(integer tagType, char uid[], integer uidLength) {
