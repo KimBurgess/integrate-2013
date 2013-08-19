@@ -56,8 +56,8 @@ define_module 'RmsTouchPanelMonitor' mdlRmsBoardroomSchedulingTp(vdvRms,
 
 define_module 'RmsClientGui_dr4_0_0' mdlRmsGui(vdvRmsGui, rmsTpRms, rmsTp);
 
-define_module 'RmsExtendedClientGui' mdlRmsGuiBoardroom(vdvRMS, 
-		dvBoardroomSchedulingTpRmsExtended, 
-		dvBoardroomSchedulingTp, 
-		rmsLocationBoardroomId, 
+define_module 'RmsExtendedClientGui' mdlRmsGuiBoardroom(vdvRMS,
+		dvBoardroomSchedulingTpRmsExtended,
+		dvBoardroomSchedulingTp,
+		rmsLocationBoardroomId,
 		rmsLocationBoardroomName);

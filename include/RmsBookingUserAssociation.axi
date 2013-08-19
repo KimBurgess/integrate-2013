@@ -59,7 +59,7 @@ define_function char[1024] insertUserDetails(char details[], UserData user) {
 	if (userIsNull(user)) {
 		return '';
 	}
-	
+
 	CRLF = "$0A, $0D";
 	left = string_get_key(NFC_BOOKING_DESCRIPTION_EXTERNAL,
 			NFC_BOOKING_NAME_PLACEHOLDER);
