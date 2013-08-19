@@ -220,6 +220,10 @@
 <DeviceMap DevAddr="dvBoardroomSchedulingTp"><DevName>dvBoardroomSchedulingTp</DevName>
 </DeviceMap>
 </File>
+<File CompileType="None" Type="Other"><Identifier>users</Identifier>
+<FilePathName>users.txt</FilePathName>
+<Comments></Comments>
+</File>
 </System>
 </Project>
 </Workspace>
