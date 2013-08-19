@@ -89,7 +89,6 @@ define_function redraw() {
 		hidePopupEx(dvTpBase, RMS_MESSAGE_VIEW_NAME, RMS_SCHEDULING_PAGE);
 		hidePopupEx(dvTpBase, NFC_LOGOUT_VIEW_NAME, RMS_SCHEDULING_PAGE);
 		hidePopupEx(dvTpBase, NFC_USER_WELCOME_VIEW_NAME, RMS_SCHEDULING_PAGE);
-		// TODO hide meetnow button
 
 		// Show the persistant elements
 		showPopupEx(dvTpBase, NFC_TOUCH_ON_VIEW_NAME, RMS_SCHEDULING_PAGE);
@@ -240,15 +239,17 @@ define_function authenticate(char uid[]) {
 	userId = getUserIdFromNfcUid(uid);
 	
 	if (!userExists(userId)) {
-		// TODO popup invalid card
+		playSound(dvTpBase, 'Invalid ID.mp3');
 		return;
 	}
 
+	playSound(dvTpBase, 'Valid ID.mp3');
+
 	activeUser = userId;
 
-	// TODO start timeline and auto log out after 45 seconds of no activity
-
 	redraw();
+	
+	// TODO start timeline and auto log out after 45 seconds of no activity
 }
 
 /**

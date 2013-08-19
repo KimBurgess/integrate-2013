@@ -127,6 +127,15 @@ define_function setButtonText(dev tp, integer address, char text[]) {
 	send_command tp, "'^TXT-', itoa(address), ',0,', text"
 }
 
+/**
+ * Plays a sounds file embedded within the TP4 file.
+ *
+ * @param	name		the name of the sound file to play
+ */
+ define_function playSound(dev tp, char soundName[]) {
+	send_command tp, "'@SOU-', soundName"
+ }
+
 
 
 #end_if
