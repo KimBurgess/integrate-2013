@@ -76,7 +76,7 @@ define_function char[1024] insertUserDetails(char details[], integer userId) {
 	right = string_get_value(NFC_BOOKING_DESCRIPTION_EXTERNAL,
 			NFC_BOOKING_NAME_PLACEHOLDER);
 
-	if (details) {
+	if (trim(details) != '') {
 		ret = "details, CRLF, CRLF, left, getUserName(userId), right";
 	} else {
 		ret = "left, getUserName(userId), right";
