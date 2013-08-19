@@ -202,8 +202,8 @@
 <FilePathName>lib\RMS\RmsNetLinxAdapter_dr4_0_0.jar</FilePathName>
 <Comments></Comments>
 </File>
-<File CompileType="Netlinx" Type="Module"><Identifier>RmsExtendedClientGui</Identifier>
-<FilePathName>module\RmsExtendedClientGui.axs</FilePathName>
+<File CompileType="Netlinx" Type="Module"><Identifier>BoardroomSchedulingUi</Identifier>
+<FilePathName>module\BoardroomSchedulingUi.axs</FilePathName>
 <Comments></Comments>
 </File>
 <File CompileType="Netlinx" Type="Module"><Identifier>RmsHeartAttack</Identifier>

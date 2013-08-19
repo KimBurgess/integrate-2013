@@ -1,4 +1,4 @@
-MODULE_NAME='RmsExtendedClientGui'(dev vdvRMS, dev dvTp, dev dvTpBase, integer tempLocationId, char tempLocationName[50])
+MODULE_NAME='BoardroomSchedulingUi'(dev vdvRMS, dev dvTp, dev dvTpBase, integer tempLocationId, char tempLocationName[50])
 
 
 #DEFINE INCLUDE_SCHEDULING_NEXT_ACTIVE_RESPONSE_CALLBACK
