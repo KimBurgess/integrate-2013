@@ -62,7 +62,7 @@ constant char RMS_MESSAGE_VIEW_NAME[] = 'rmsMessage';
 
 volatile locationInfo uiLocation;
 
-volatile UserData activeUser;
+volatile integer activeUser;
 
 
 /**
@@ -76,10 +76,10 @@ define_function init() {
  * Render the appropriate popups and page elements for the current system state.
  */
 define_function redraw() {
-	local_var UserData lastUser;
+	local_var integer lastUser;
 
 	// No user currently authed
-	if (userIsNull(activeUser)) {
+	if (!activeUser) {
 
 		// Hide all the stuff you need to be authed for
 		hidePopupEx(dvTpBase, RMS_CALENDAR_VIEW_NAME, RMS_SCHEDULING_PAGE);
@@ -119,7 +119,7 @@ define_function redraw() {
 
 		// Only update this view on a user change to prevent issue with popup
 		// ordering
-		if (userIsEqual(activeUser, lastUser)) {
+		if (lastUser && (activeUser == lastUser)) {
 			return;
 		}
 
@@ -182,12 +182,12 @@ define_function updateMeetingInfoView(RmsEventBookingResponse booking,
 /**
  * Updates customised user content (name, photo etc.).
  *
- * @param	user		the user data to update with
+ * @param	userId		the user system userId to update with
  */
-define_function updateUserInfoView(UserData user) {
+define_function updateUserInfoView(integer userId) {
 	stack_var char nameParts[3][50];
 
-	explode(' ', user.name, nameParts, 3);
+	explode(' ', getUserName(userId), nameParts, 3);
 
 	setButtonText(dvTp, NFC_USER_WELCOME_VIEW_ADDRESS,
 			"'Welcome, ', nameParts[1]");
@@ -235,13 +235,16 @@ define_function setNextMeetingInfo(RmsEventBookingResponse booking) {
  * @param	uid			the captured uid
  */
 define_function authenticate(char uid[]) {
-	stack_var UserData testUser;
+	stack_var integer userId;
 
-	testUser.uid = '1234';
-	testUser.name = 'Kim Burgess';
-	testUser.email = 'kim.burgess@amxaustralia.com.au';
+	userId = getUserIdFromNfcUid(uid);
+	
+	if (!userExists(userId)) {
+		// TODO popup invalid card
+		return;
+	}
 
-	activeUser = testUser;
+	activeUser = userId;
 
 	// TODO start timeline and auto log out after 45 seconds of no activity
 
@@ -252,18 +255,32 @@ define_function authenticate(char uid[]) {
  * Deauth any currently logged in users.
  */
 define_function logout() {
-	activeUser = nullUser;
+	activeUser = 0;
 
 	redraw();
 }
 
 /**
+ * Create an adhoc apointment for right now.
+ */
+define_function meetNow() {
+	RmsBookingCreate(LDATE,
+			TIME,
+			MEET_NOW_TIME,
+			'Ad-hoc meeting',
+			insertUserDetails('', activeUser),
+			locationTracker.location.id);
+
+	// TODO show 'Requesting Reservation popup'
+}
+
+/**
  * Sends a meeting confirmation to a specific user.
  *
- * @param	user		the user to send to
+ * @param	userId		the user to send to
  * @param	booking		the booking to confirm
  */
-define_function sendBookingConfirmation(UserData user,
+define_function sendBookingConfirmation(integer userId,
 		RmsEventBookingResponse booking) {
 	stack_var char CRLF[2];
 	stack_var char msg[1024];
@@ -283,19 +300,7 @@ define_function sendBookingConfirmation(UserData user,
 			'This booking was created from the touch panel booking system. If ',
 			'you did not create this please contact your system administrator.'";
 
-	RmsEmail(user.email, subject, msg, '', '');
-}
-
-/**
- * Create an adhoc apointment for right now.
- */
-define_function meetNow() {
-	RmsBookingCreate(LDATE,
-			TIME,
-			MEET_NOW_TIME,
-			'Ad-hoc meeting',
-			insertUserDetails('', activeUser),
-			locationTracker.location.id);
+	RmsEmail(getUserEmail(userId), subject, msg, '', '');
 }
 
 /**
@@ -318,6 +323,7 @@ define_function RmsEventSchedulingNextActiveResponse(char isDefaultLocation,
 		char bookingId[],
 		RmsEventBookingResponse eventBookingResponse) {
 	if (eventBookingResponse.location == locationTracker.location.id) {
+		send_string 0, '>>>>>>>> RmsEventSchedulingNextActiveResponse() called';
 		setNextMeetingInfo(eventBookingResponse);
 	}
 }
@@ -328,6 +334,7 @@ define_function RmsEventSchedulingActiveResponse(char isDefaultLocation,
 		char bookingId[],
 		RmsEventBookingResponse eventBookingResponse) {
 	if (eventBookingResponse.location == locationTracker.location.id) {
+		send_string 0, '>>>>>>>> RmsEventSchedulingActiveResponse() called';
 		setActiveMeetingInfo(eventBookingResponse);
 		setInUse(true);
 	}
@@ -336,6 +343,7 @@ define_function RmsEventSchedulingActiveResponse(char isDefaultLocation,
 define_function RmsEventSchedulingNextActiveUpdated(char bookingId[],
 		RmsEventBookingResponse eventBookingResponse) {
 	if (eventBookingResponse.location == locationTracker.location.id) {
+		send_string 0, '>>>>>>>> RmsEventSchedulingNextActiveUpdated() called';
 		setNextMeetingInfo(eventBookingResponse);
 	}
 }
@@ -343,6 +351,7 @@ define_function RmsEventSchedulingNextActiveUpdated(char bookingId[],
 define_function RmsEventSchedulingActiveUpdated(char bookingId[],
 		RmsEventBookingResponse eventBookingResponse) {
 	if (eventBookingResponse.location == locationTracker.location.id) {
+		send_string 0, '>>>>>>>> RmsEventSchedulingActiveUpdated() called';
 		setActiveMeetingInfo(eventBookingResponse);
 		setInUse(true);
 	}
@@ -351,6 +360,7 @@ define_function RmsEventSchedulingActiveUpdated(char bookingId[],
 define_function RmsEventSchedulingEventEnded(CHAR bookingId[],
 		RmsEventBookingResponse eventBookingResponse) {
 	if (eventBookingResponse.location == locationTracker.location.id) {
+		send_string 0, '>>>>>>>> RmsEventSchedulingEventEnded() called';
 		setInUse(false);
 	}
 }
@@ -358,6 +368,7 @@ define_function RmsEventSchedulingEventEnded(CHAR bookingId[],
 define_function RmsEventSchedulingEventStarted(CHAR bookingId[],
 		RmsEventBookingResponse eventBookingResponse) {
 	if (eventBookingResponse.location == locationTracker.location.id) {
+		send_string 0, '>>>>>>>> RmsEventSchedulingEventStarted() called';
 		setInUse(true);
 	}
 }
@@ -366,8 +377,9 @@ define_function RmsEventSchedulingCreateResponse(char isDefaultLocation,
 		char responseText[],
 		RmsEventBookingResponse eventBookingResponse) {
 	if (eventBookingResponse.location = locationTracker.location.id) {
+		send_string 0, '>>>>>>>> RmsEventSchedulingCreateResponse() called';
 
-		if (eventBookingResponse.isSuccessful && !userIsNull(activeUser)) {
+		if (eventBookingResponse.isSuccessful && activeUser) {
 			extractUserDetails(eventBookingResponse);
 			sendBookingConfirmation(activeUser, eventBookingResponse);
 		}
@@ -379,7 +391,7 @@ define_function RmsEventSchedulingCreateResponse(char isDefaultLocation,
 // NFC callbacks
 
 define_function NfcTagRead(integer tagType, char uid[], integer uidLength) {
-	if (userIsNull(activeUser)) {
+	if (!activeUser) {
 		authenticate(uid);
 	}
 }

@@ -50,14 +50,24 @@ define_function char extractUserDetails(RmsEventBookingResponse booking) {
 	return true;
 }
 
-define_function char[1024] insertUserDetails(char details[], UserData user) {
+/**
+ * Insert parsable (and human readable) user details into a meeting details
+ * string.
+ *
+ * @param	details			the existing meeting details string
+ * @param	userId			the internal userId
+ * @return					an updated details string that can be used when
+ *							creating a booking to enable the associated user
+ *							to be identified
+ */
+define_function char[1024] insertUserDetails(char details[], integer userId) {
 	stack_var char CRLF[2];
 	stack_var char left[256];
 	stack_var char right[256];
 	stack_var char ret[1024];
 
-	if (userIsNull(user)) {
-		return '';
+	if (!userExists(userId)) {
+		return details;
 	}
 
 	CRLF = "$0A, $0D";
@@ -67,9 +77,9 @@ define_function char[1024] insertUserDetails(char details[], UserData user) {
 			NFC_BOOKING_NAME_PLACEHOLDER);
 
 	if (details) {
-		ret = "details, CRLF, CRLF, left, user.name, right";
+		ret = "details, CRLF, CRLF, left, getUserName(userId), right";
 	} else {
-		ret = "left, user.name, right";
+		ret = "left, getUserName(userId), right";
 	}
 
 	return ret;
