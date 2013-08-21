@@ -130,10 +130,6 @@
 <UserName></UserName>
 <Password></Password>
 <Comments></Comments>
-<File CompileType="None" Type="Include"><Identifier>NfcListener</Identifier>
-<FilePathName>include\NfcListener.axi</FilePathName>
-<Comments></Comments>
-</File>
 <File CompileType="None" Type="Include"><Identifier>RmsAssetLocationTracker</Identifier>
 <FilePathName>include\RmsAssetLocationTracker.axi</FilePathName>
 <Comments></Comments>
@@ -152,10 +148,6 @@
 </File>
 <File CompileType="None" Type="Include"><Identifier>TimeUtil</Identifier>
 <FilePathName>include\TimeUtil.axi</FilePathName>
-<Comments></Comments>
-</File>
-<File CompileType="None" Type="Include"><Identifier>TPUtil</Identifier>
-<FilePathName>include\TPUtil.axi</FilePathName>
 <Comments></Comments>
 </File>
 <File CompileType="None" Type="Include"><Identifier>User</Identifier>
@@ -200,6 +192,14 @@
 </File>
 <File CompileType="None" Type="DUET"><Identifier>RmsNetLinxAdapter_dr4_0_0</Identifier>
 <FilePathName>lib\RMS\RmsNetLinxAdapter_dr4_0_0.jar</FilePathName>
+<Comments></Comments>
+</File>
+<File CompileType="None" Type="Include"><Identifier>TpApi</Identifier>
+<FilePathName>lib\TP\TpApi.axi</FilePathName>
+<Comments></Comments>
+</File>
+<File CompileType="None" Type="Include"><Identifier>TpEventListener</Identifier>
+<FilePathName>lib\TP\TpEventListener.axi</FilePathName>
 <Comments></Comments>
 </File>
 <File CompileType="Netlinx" Type="Module"><Identifier>BoardroomSchedulingUi</Identifier>

@@ -8,17 +8,17 @@ MODULE_NAME='BoardroomSchedulingUi'(dev vdvRMS, dev dvTp, dev dvTpBase, integer 
 #DEFINE INCLUDE_SCHEDULING_EVENT_ENDED_CALLBACK
 #DEFINE INCLUDE_SCHEDULING_EVENT_STARTED_CALLBACK
 #DEFINE INCLUDE_SCHEDULING_CREATE_RESPONSE_CALLBACK
-#DEFINE INCLUDE_NFC_TAG_READ_CALLBACK
+#DEFINE INCLUDE_TP_NFC_TAG_READ_CALLBACK
 
 
-#INCLUDE 'TPUtil'
+#INCLUDE 'TPApi'
+#INCLUDE 'TpEventListener'
 #INCLUDE 'TimeUtil'
 #INCLUDE 'User'
 #INCLUDE 'RmsBookingUserAssociation'
 #INCLUDE 'RmsAssetLocationTracker'
 #INCLUDE 'RmsSchedulingApi'
 #INCLUDE 'RmsSchedulingEventListener'
-#INCLUDE 'NfcListener'
 
 
 define_type
@@ -237,7 +237,7 @@ define_function authenticate(char uid[]) {
 	stack_var integer userId;
 
 	userId = getUserIdFromNfcUid(uid);
-	
+
 	if (!userExists(userId)) {
 		playSound(dvTpBase, 'Invalid ID.mp3');
 		return;
@@ -248,7 +248,7 @@ define_function authenticate(char uid[]) {
 	activeUser = userId;
 
 	redraw();
-	
+
 	// TODO start timeline and auto log out after 45 seconds of no activity
 }
 
