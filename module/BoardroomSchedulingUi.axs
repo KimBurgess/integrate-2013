@@ -185,7 +185,7 @@ define_function updateMeetingInfoView(RmsEventBookingResponse booking,
  * @param	userId		the user system userId to update with
  */
 define_function updateUserInfoView(integer userId) {
-	stack_var char nameParts[3][50];
+	stack_var char nameParts[5][50];
 
 	explode(' ', getUserName(userId), nameParts, 3);
 
