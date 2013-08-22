@@ -72,6 +72,9 @@ volatile locationInfo uiLocation;
 
 volatile integer activeUser;
 
+volatile char lastBookingRequestDate[10];
+volatile char lastBookingRequestTime[8];
+
 
 /**
  * Initialise module variables that can be assisgned at compile time.
@@ -423,8 +426,12 @@ define_function RmsEventSchedulingCreateResponse(char isDefaultLocation,
 		char responseText[],
 		RmsEventBookingResponse eventBookingResponse) {
 	if (eventBookingResponse.location = locationTracker.location.id) {
-		// TODO track last request time and filter out responses caused by different means
-		if (activeUser) {
+	
+		// Make sure(ish) that this a response to something that was requested
+		// from this UI.
+		if (activeUser &&
+				eventBookingResponse.startTime == lastBookingRequestTime &&
+				eventBookingResponse.startDate == lastBookingRequestDate) {
 			if (eventBookingResponse.isSuccessful) {
 				showPopupEx(dvTpBase, NFC_RESERVE_SUCCESS_VIEW_NAME, RMS_SCHEDULING_PAGE);
 				extractUserDetails(eventBookingResponse);
@@ -433,6 +440,7 @@ define_function RmsEventSchedulingCreateResponse(char isDefaultLocation,
 				showPopupEx(dvTpBase, NFC_RESERVE_FAIL_VIEW_NAME, RMS_SCHEDULING_PAGE);
 			}
 		}
+		
 	}
 }
 
