@@ -45,6 +45,8 @@ constant integer NFC_USER_WELCOME_VIEW_ADDRESS = 11;
 constant integer NFC_MEET_NOW_VIEW_ADDRESS = 20;
 
 constant char RMS_SCHEDULING_PAGE[] = 'rmsSchedulingPage';
+constant char OFFLINE_PAGE[] = 'offline';
+constant char CONNECTED_PAGE[] = 'connected';
 constant char MEETING_INFO_VIEW_NAME[] = 'rmsMeetingInfoCard';
 constant char IN_USE_INDICATOR_VIEW_NAME[] = 'rmsInUseIndicator';
 constant char AVAILABILITY_GUIDE_VIEW_NAME[] = 'rmsAvailabilityGuide';
@@ -403,6 +405,23 @@ init();
 
 
 define_event
+
+channel_event[vdvRMS, RMS_CHANNEL_CLIENT_REGISTERED] {
+
+	on: {
+		setPageAnimated(dvTpBase, CONNECTED_PAGE, 'fade', 0, 2);
+		redraw();
+		wait 20 'display' {
+			setPageAnimated(dvTpBase, RMS_SCHEDULING_PAGE, 'fade', 0, 40);
+		}
+	}
+	
+	off: {
+		cancel_wait 'display';
+		setPageAnimated(dvTpBase, OFFLINE_PAGE, 'fade', 0, 20);
+	}
+
+}
 
 data_event[dvTp] {
 
