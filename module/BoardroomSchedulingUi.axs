@@ -238,11 +238,11 @@ define_function authenticate(char uid[]) {
 	userId = getUserIdFromNfcUid(uid);
 
 	if (!userExists(userId)) {
-		playSound(dvTpBase, 'Invalid ID.mp3');
+		playSound(dvTpBase, 'invalid-id.wav');
 		return;
 	}
 
-	playSound(dvTpBase, 'Valid ID.mp3');
+	playSound(dvTpBase, 'valid-id.wav');
 
 	activeUser = userId;
 
