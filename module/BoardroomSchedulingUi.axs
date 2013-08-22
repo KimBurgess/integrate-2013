@@ -25,7 +25,6 @@ define_type
 
 structure locationInfo {
 	char isInUse;
-	char hasMoreBookings;
 	RmsEventBookingResponse activeBooking;
 	RmsEventBookingResponse nextBooking;
 }
@@ -308,10 +307,10 @@ define_function sendBookingConfirmation(integer userId,
  * Check if there are any more known bookings within the scheduling sync window
  * for the ui location.
  *
- * @return				a boolean, true if there is another know booking
+ * @return				a boolean, true if there is another known booking
  */
 define_function char uiLocationHasMoreBookings() {
-	return (uiLocation.nextBooking.bookingId == uiLocation.activeBooking.bookingId) ||
+	return (uiLocation.nextBooking.bookingId != uiLocation.activeBooking.bookingId) &&
 			uiLocation.nextBooking.bookingId = '';
 }
 
