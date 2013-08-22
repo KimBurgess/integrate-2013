@@ -43,6 +43,7 @@ constant integer MEETING_HEADER_VIEW_ADDRESS = 6;
 constant integer NFC_LOGOUT_VIEW_ADDRESS = 10;
 constant integer NFC_USER_WELCOME_VIEW_ADDRESS = 11;
 constant integer NFC_MEET_NOW_VIEW_ADDRESS = 20;
+constant integer NFC_BOOK_NEXT_VIEW_ADDRESS = 21;
 
 constant char RMS_SCHEDULING_PAGE[] = 'rmsSchedulingPage';
 constant char OFFLINE_PAGE[] = 'offline';
@@ -54,7 +55,11 @@ constant char NFC_TOUCH_ON_VIEW_NAME[] = 'nfcTouchOn';
 constant char NFC_USER_WELCOME_VIEW_NAME[] = 'nfcWelcome';
 constant char NFC_LOGOUT_VIEW_NAME[] = 'nfcLogOut';
 constant char NFC_HOME_VIEW_NAME[] = 'nfcHome';
-constant char RMS_MEET_NOW_VIEW_NAME[] = 'rmsMeetNow';
+constant char NFC_MEET_NOW_VIEW_NAME[] = 'nfcShortcutNow';
+constant char NFC_BOOK_NEXT_VIEW_NAME[] = 'nfcShortcutNext';
+constant char NFC_RESERVE_REQUEST_VIEW_NAME[] = 'nfcShortcutRequest';
+constant char NFC_RESERVE_SUCCESS_VIEW_NAME[] = 'nfcShortcutSuccess';
+constant char NFC_RESERVE_FAIL_VIEW_NAME[] = 'nfcShortcutFail';
 constant char RMS_CALENDAR_VIEW_NAME[] = 'rmsCalendar';
 constant char RMS_MEETING_DETAILS_VIEW_NAME[] = 'rmsMeetingDetails';
 constant char RMS_MEETING_DOES_NOT_EXIST_VIEW_NAME[] = 'rmsMeetingDoesNotExist';
@@ -90,6 +95,7 @@ define_function redraw() {
 		hidePopupEx(dvTpBase, RMS_MESSAGE_VIEW_NAME, RMS_SCHEDULING_PAGE);
 		hidePopupEx(dvTpBase, NFC_LOGOUT_VIEW_NAME, RMS_SCHEDULING_PAGE);
 		hidePopupEx(dvTpBase, NFC_USER_WELCOME_VIEW_NAME, RMS_SCHEDULING_PAGE);
+		hidePopupEx(dvTpBase, NFC_MEET_NOW_VIEW_NAME, RMS_SCHEDULING_PAGE);
 
 		// Show the persistant elements
 		showPopupEx(dvTpBase, NFC_TOUCH_ON_VIEW_NAME, RMS_SCHEDULING_PAGE);
@@ -133,16 +139,17 @@ define_function redraw() {
 
 		// And show the authed content
 		showPopupEx(dvTpBase, NFC_LOGOUT_VIEW_NAME, RMS_SCHEDULING_PAGE);
+		showPopupEx(dvTpBase, NFC_HOME_VIEW_NAME, RMS_SCHEDULING_PAGE);
+		showPopupEx(dvTpBase, NFC_USER_WELCOME_VIEW_NAME, RMS_SCHEDULING_PAGE);
 
 		// If we've got time for a 'meet now' before the next meeting give the
 		// option, otherwise just skip straight to the calendar
 		if ((uiLocation.nextBooking.minutesUntilStart > MEET_NOW_TIME ||
 				!uiLocationHasMoreBookings()) &&
 				!uiLocation.isInUse) {
-			showPopupEx(dvTpBase, NFC_HOME_VIEW_NAME, RMS_SCHEDULING_PAGE);
-			showPopupEx(dvTpBase, NFC_USER_WELCOME_VIEW_NAME, RMS_SCHEDULING_PAGE);
+			showPopupEx(dvTpBase, NFC_MEET_NOW_VIEW_NAME, RMS_SCHEDULING_PAGE);
 		} else {
-			showPopupEx(dvTpBase, RMS_CALENDAR_VIEW_NAME, RMS_SCHEDULING_PAGE);
+			showPopupEx(dvTpBase, NFC_BOOK_NEXT_VIEW_NAME, RMS_SCHEDULING_PAGE);
 		}
 	}
 
@@ -290,8 +297,13 @@ define_function meetNow() {
 			'Ad-hoc meeting',
 			insertUserDetails('', activeUser),
 			locationTracker.location.id);
+}
 
-	// TODO show 'Requesting Reservation popup'
+/**
+ * Reserve the next available time slot.
+ */
+define_function bookNext() {
+	// TODO implement bookNext()
 }
 
 /**
@@ -391,11 +403,16 @@ define_function RmsEventSchedulingCreateResponse(char isDefaultLocation,
 		char responseText[],
 		RmsEventBookingResponse eventBookingResponse) {
 	if (eventBookingResponse.location = locationTracker.location.id) {
-		if (eventBookingResponse.isSuccessful && activeUser) {
-			extractUserDetails(eventBookingResponse);
-			sendBookingConfirmation(activeUser, eventBookingResponse);
+		// TODO track last request time and filter out responses caused by different means
+		if (activeUser) {
+			if (eventBookingResponse.isSuccessful) {
+				showPopupEx(dvTpBase, NFC_RESERVE_SUCCESS_VIEW_NAME, RMS_SCHEDULING_PAGE);
+				extractUserDetails(eventBookingResponse);
+				sendBookingConfirmation(activeUser, eventBookingResponse);
+			} else {
+				showPopupEx(dvTpBase, NFC_RESERVE_FAIL_VIEW_NAME, RMS_SCHEDULING_PAGE);
+			}
 		}
-
 	}
 }
 
@@ -448,6 +465,14 @@ button_event[dvTp, NFC_MEET_NOW_VIEW_ADDRESS] {
 
 	push: {
 		meetNow();
+	}
+
+}
+
+button_event[dvTp, NFC_BOOK_NEXT_VIEW_ADDRESS] {
+
+	push: {
+		bookNext();
 	}
 
 }
