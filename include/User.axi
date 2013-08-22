@@ -80,8 +80,8 @@ define_function char[USER_NFC_UID_MAX_LENGTH] getUserNfcUid(integer id) {
 	if (id > USER_MAX_USER_ACCOUNTS || id == 0) {
 		return '';
 	}
-	
-	return systemUsers[id].nfcUid; 
+
+	return systemUsers[id].nfcUid;
 }
 
 /**
@@ -94,7 +94,7 @@ define_function char[USER_NAME_MAX_LENGTH] getUserName(integer id) {
 	if (id > USER_MAX_USER_ACCOUNTS || id == 0) {
 		return '';
 	}
-	
+
 	return systemUsers[id].name;
 }
 
@@ -108,8 +108,8 @@ define_function char[USER_EMAIL_MAX_LENGTH] getUserEmail(integer id) {
 	if (id > USER_MAX_USER_ACCOUNTS || id == 0) {
 		return '';
 	}
-	
-	return systemUsers[id].email; 
+
+	return systemUsers[id].email;
 }
 
 /**
@@ -126,7 +126,7 @@ define_function integer getUserIdFromNfcUid(char nfcUid[USER_NFC_UID_MAX_LENGTH]
 			return id;
 		}
 	}
-	
+
 	return 0;
 }
 
@@ -148,7 +148,7 @@ define_function integer getUserIdFromName(char name[USER_NAME_MAX_LENGTH]) {
 			return id;
 		}
 	}
-	
+
 	return 0;
 }
 
@@ -166,7 +166,7 @@ define_function integer getUserIdFromEmail(char email[USER_EMAIL_MAX_LENGTH]) {
 			return id;
 		}
 	}
-	
+
 	return 0;
 }
 
@@ -194,7 +194,7 @@ define_function integer createUser(char nfcUid[USER_NFC_UID_MAX_LENGTH],
 			return id;
 		}
 	}
-	
+
 	return 0;
 }
 
@@ -225,7 +225,7 @@ define_function char loadSystemUsersFromFile(char filename[]) {
 	while (readLength >= 0) {
 
 		buff = trim(buff);
-		
+
 		// ignore comments and empty lines
 		if (length_array(buff) && left_string(buff, 1) != '#') {
 			explode(',', buff, params, 3);
@@ -233,7 +233,7 @@ define_function char loadSystemUsersFromFile(char filename[]) {
 		}
 
 		readLength = file_read_line(fileHandle, buff, max_length_array(buff));
-		
+
 		send_string 0, "'>>>>> readLength = ', itoa(readLength)";
 	}
 
@@ -243,9 +243,9 @@ define_function char loadSystemUsersFromFile(char filename[]) {
 		file_close(fileHandle);
 		return false;
 	}
-	
+
 	send_string 0, 'NFC user data loaded';
-	
+
 	file_close(fileHandle);
 
 	return true;
