@@ -7,5 +7,5 @@
 
 4306D19C,Kim Burgess,kim.burgess@amxaustralia.com.au
 E3C3CA98,David Vine,david.vine@amxaustralia.com.au
-630BD29C,Mr. Fake McFakey Pants,kim.burgess@amxaustralia.com.au
+630BD29C,Kim Burgess,kim.burgess@amxaustralia.com.au
 
