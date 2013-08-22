@@ -130,20 +130,8 @@
 <UserName></UserName>
 <Password></Password>
 <Comments></Comments>
-<File CompileType="None" Type="Include"><Identifier>RmsAssetLocationTracker</Identifier>
-<FilePathName>include\RmsAssetLocationTracker.axi</FilePathName>
-<Comments></Comments>
-</File>
 <File CompileType="None" Type="Include"><Identifier>RmsBookingUserAssociation</Identifier>
 <FilePathName>include\RmsBookingUserAssociation.axi</FilePathName>
-<Comments></Comments>
-</File>
-<File CompileType="None" Type="Include"><Identifier>RmsExtendedApi</Identifier>
-<FilePathName>include\RmsExtendedApi.axi</FilePathName>
-<Comments></Comments>
-</File>
-<File CompileType="None" Type="Include"><Identifier>RmsExtendedEventListener</Identifier>
-<FilePathName>include\RmsExtendedEventListener.axi</FilePathName>
 <Comments></Comments>
 </File>
 <File CompileType="None" Type="Include"><Identifier>TimeUtil</Identifier>
@@ -156,6 +144,22 @@
 </File>
 <File CompileType="None" Type="Include"><Identifier>string</Identifier>
 <FilePathName>lib\NCL\string.axi</FilePathName>
+<Comments></Comments>
+</File>
+<File CompileType="None" Type="Include"><Identifier>RmsAssetLocationTracker</Identifier>
+<FilePathName>lib\rms-tools\RmsAssetLocationTracker.axi</FilePathName>
+<Comments></Comments>
+</File>
+<File CompileType="None" Type="Include"><Identifier>RmsExtendedApi</Identifier>
+<FilePathName>lib\rms-tools\RmsExtendedApi.axi</FilePathName>
+<Comments></Comments>
+</File>
+<File CompileType="None" Type="Include"><Identifier>RmsExtendedEventListener</Identifier>
+<FilePathName>lib\rms-tools\RmsExtendedEventListener.axi</FilePathName>
+<Comments></Comments>
+</File>
+<File CompileType="Netlinx" Type="Module"><Identifier>RmsHeartAttack</Identifier>
+<FilePathName>lib\rms-tools\RmsHeartAttack.axs</FilePathName>
 <Comments></Comments>
 </File>
 <File CompileType="None" Type="Include"><Identifier>RmsApi</Identifier>
@@ -204,10 +208,6 @@
 </File>
 <File CompileType="Netlinx" Type="Module"><Identifier>BoardroomSchedulingUi</Identifier>
 <FilePathName>module\BoardroomSchedulingUi.axs</FilePathName>
-<Comments></Comments>
-</File>
-<File CompileType="Netlinx" Type="Module"><Identifier>RmsHeartAttack</Identifier>
-<FilePathName>module\RmsHeartAttack.axs</FilePathName>
 <Comments></Comments>
 </File>
 <File CompileType="Netlinx" Type="MasterSrc"><Identifier>NOC</Identifier>
