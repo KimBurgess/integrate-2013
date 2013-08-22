@@ -61,3 +61,6 @@ define_module 'BoardroomSchedulingUi' mdlBoardroomUi(vdvRMS,
 		dvBoardroomSchedulingTp,
 		rmsLocationBoardroomId,
 		rmsLocationBoardroomName);
+
+define_module 'RmsSchedulingEventLogger' mdlRmsSchedulingLogger(vdvRMS);
+
