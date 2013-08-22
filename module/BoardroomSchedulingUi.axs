@@ -210,6 +210,7 @@ define_function updateUserInfoView(integer userId) {
  */
 define_function setOnline(char isOnline) {
 	if (isOnline) {
+		cancel_wait 'display';
 		setPageAnimated(dvTpBase, CONNECTED_PAGE, 'fade', 0, 2);
 		redraw();
 		wait 10 'display' {
@@ -220,7 +221,10 @@ define_function setOnline(char isOnline) {
 		}
 	} else {
 		cancel_wait 'display';
-		setPageAnimated(dvTpBase, OFFLINE_PAGE, 'fade', 0, 20);
+		setPageAnimated(dvTpBase, BLANK_PAGE, 'fade', 0, 10);
+		wait 10 'display' {
+			setPageAnimated(dvTpBase, OFFLINE_PAGE, 'fade', 0, 20);	
+		}
 	}
 	
 	logout();
