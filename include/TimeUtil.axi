@@ -106,3 +106,25 @@ define_function char[7] time12Hour(char timeStr[8]) {
 	return "format('%d', hours), ':', format('%02d', minutes), period";
 }
 
+
+
+define_function char[8] nextMinute(char timeStr[8]) {
+	sinteger hours;
+	sinteger minutes;
+	sinteger seconds;
+
+	hours = time_to_hour(timeStr);
+	minutes = time_to_minute(timeStr);
+	seconds = time_to_second(timeStr);
+	
+	minutes = minutes + 1;
+	if (minutes >= 60) {
+		minutes = 0;
+		hours = hours + 1;
+		if (hours >= 24) {
+			hours = 0;
+		}
+	}
+	
+	return "format('%02d', hours), ':', format('%02d', minutes), ':', format('%02d', seconds)";
+}

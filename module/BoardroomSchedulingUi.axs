@@ -48,6 +48,7 @@ constant integer NFC_BOOK_NEXT_VIEW_ADDRESS = 21;
 constant char RMS_SCHEDULING_PAGE[] = 'rmsSchedulingPage';
 constant char OFFLINE_PAGE[] = 'offline';
 constant char CONNECTED_PAGE[] = 'connected';
+constant char BLANK_PAGE[] = 'blank'
 constant char MEETING_INFO_VIEW_NAME[] = 'rmsMeetingInfoCard';
 constant char IN_USE_INDICATOR_VIEW_NAME[] = 'rmsInUseIndicator';
 constant char AVAILABILITY_GUIDE_VIEW_NAME[] = 'rmsAvailabilityGuide';
@@ -211,13 +212,18 @@ define_function setOnline(char isOnline) {
 	if (isOnline) {
 		setPageAnimated(dvTpBase, CONNECTED_PAGE, 'fade', 0, 2);
 		redraw();
-		wait 20 'display' {
-			setPageAnimated(dvTpBase, RMS_SCHEDULING_PAGE, 'fade', 0, 40);
+		wait 10 'display' {
+			setPageAnimated(dvTpBase, BLANK_PAGE, 'fade', 0, 10);
+			wait 10 'display' {
+				setPageAnimated(dvTpBase, RMS_SCHEDULING_PAGE, 'fade', 0, 30);
+			}
 		}
 	} else {
 		cancel_wait 'display';
 		setPageAnimated(dvTpBase, OFFLINE_PAGE, 'fade', 0, 20);
 	}
+	
+	logout();
 }
 
 /**
@@ -303,7 +309,15 @@ define_function meetNow() {
  * Reserve the next available time slot.
  */
 define_function bookNext() {
-	// TODO implement bookNext()
+	// TODO there should probably be a little more smarts here to make sure
+	// there isn't a back to back meeting.
+	// FIXME this will break is someone makes a booking at 11:59pm.
+	RmsBookingCreate(uiLocation.activeBooking.endDate,
+			nextMinute(uiLocation.activeBooking.endTime),
+			MEET_NOW_TIME,
+			'Ad-hoc meeting',
+			insertUserDetails('', activeUser),
+			locationTracker.location.id);
 }
 
 /**
