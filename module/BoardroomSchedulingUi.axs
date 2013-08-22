@@ -42,6 +42,7 @@ constant integer MEETING_DETAILS_VIEW_ADDRESS = 5;
 constant integer MEETING_HEADER_VIEW_ADDRESS = 6;
 constant integer NFC_LOGOUT_VIEW_ADDRESS = 10;
 constant integer NFC_USER_WELCOME_VIEW_ADDRESS = 11;
+constant integer NFC_USER_IMAGE_VIEW_ADDRESS = 12;
 constant integer NFC_MEET_NOW_VIEW_ADDRESS = 20;
 constant integer NFC_BOOK_NEXT_VIEW_ADDRESS = 21;
 
@@ -200,7 +201,8 @@ define_function updateUserInfoView(integer userId) {
 	setButtonText(dvTp, NFC_USER_WELCOME_VIEW_ADDRESS,
 			"'Welcome, ', nameParts[1]");
 
-	// TODO set photo here
+	setButtonImage(dvTp, NFC_USER_IMAGE_VIEW_ADDRESS,
+			"'profile-', getUserName(userId), '.jpg'");
 }
 
 /**
