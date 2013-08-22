@@ -325,7 +325,6 @@ define_function RmsEventSchedulingNextActiveResponse(char isDefaultLocation,
 		char bookingId[],
 		RmsEventBookingResponse eventBookingResponse) {
 	if (eventBookingResponse.location == locationTracker.location.id) {
-		send_string 0, '>>>>>>>> RmsEventSchedulingNextActiveResponse() called';
 		setNextMeetingInfo(eventBookingResponse);
 	}
 }
@@ -336,7 +335,6 @@ define_function RmsEventSchedulingActiveResponse(char isDefaultLocation,
 		char bookingId[],
 		RmsEventBookingResponse eventBookingResponse) {
 	if (eventBookingResponse.location == locationTracker.location.id) {
-		send_string 0, '>>>>>>>> RmsEventSchedulingActiveResponse() called';
 		setActiveMeetingInfo(eventBookingResponse);
 		setInUse(true);
 	}
@@ -345,7 +343,6 @@ define_function RmsEventSchedulingActiveResponse(char isDefaultLocation,
 define_function RmsEventSchedulingNextActiveUpdated(char bookingId[],
 		RmsEventBookingResponse eventBookingResponse) {
 	if (eventBookingResponse.location == locationTracker.location.id) {
-		send_string 0, '>>>>>>>> RmsEventSchedulingNextActiveUpdated() called';
 		setNextMeetingInfo(eventBookingResponse);
 	}
 }
@@ -353,7 +350,6 @@ define_function RmsEventSchedulingNextActiveUpdated(char bookingId[],
 define_function RmsEventSchedulingActiveUpdated(char bookingId[],
 		RmsEventBookingResponse eventBookingResponse) {
 	if (eventBookingResponse.location == locationTracker.location.id) {
-		send_string 0, '>>>>>>>> RmsEventSchedulingActiveUpdated() called';
 		setActiveMeetingInfo(eventBookingResponse);
 		setInUse(true);
 	}
@@ -362,7 +358,6 @@ define_function RmsEventSchedulingActiveUpdated(char bookingId[],
 define_function RmsEventSchedulingEventEnded(CHAR bookingId[],
 		RmsEventBookingResponse eventBookingResponse) {
 	if (eventBookingResponse.location == locationTracker.location.id) {
-		send_string 0, '>>>>>>>> RmsEventSchedulingEventEnded() called';
 		setInUse(false);
 	}
 }
@@ -370,7 +365,6 @@ define_function RmsEventSchedulingEventEnded(CHAR bookingId[],
 define_function RmsEventSchedulingEventStarted(CHAR bookingId[],
 		RmsEventBookingResponse eventBookingResponse) {
 	if (eventBookingResponse.location == locationTracker.location.id) {
-		send_string 0, '>>>>>>>> RmsEventSchedulingEventStarted() called';
 		setInUse(true);
 	}
 }
@@ -379,8 +373,6 @@ define_function RmsEventSchedulingCreateResponse(char isDefaultLocation,
 		char responseText[],
 		RmsEventBookingResponse eventBookingResponse) {
 	if (eventBookingResponse.location = locationTracker.location.id) {
-		send_string 0, '>>>>>>>> RmsEventSchedulingCreateResponse() called';
-
 		if (eventBookingResponse.isSuccessful && activeUser) {
 			extractUserDetails(eventBookingResponse);
 			sendBookingConfirmation(activeUser, eventBookingResponse);
