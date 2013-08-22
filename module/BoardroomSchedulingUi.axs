@@ -362,8 +362,8 @@ define_function sendBookingConfirmation(integer userId,
  * @return				a boolean, true if there is another known booking
  */
 define_function char uiLocationHasMoreBookings() {
-	return (uiLocation.nextBooking.bookingId != uiLocation.activeBooking.bookingId) &&
-			uiLocation.nextBooking.bookingId = '';
+	return !((uiLocation.nextBooking.bookingId == uiLocation.activeBooking.bookingId) ||
+			uiLocation.nextBooking.bookingId = '');
 }
 
 
