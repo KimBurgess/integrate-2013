@@ -196,6 +196,24 @@ define_function updateUserInfoView(integer userId) {
 }
 
 /**
+ * Sets the system state.
+ *
+ * @param	isOnLine	a boolean, true if we are good to go
+ */
+define_function setOnline(char isOnline) {
+	if (isOnline) {
+		setPageAnimated(dvTpBase, CONNECTED_PAGE, 'fade', 0, 2);
+		redraw();
+		wait 20 'display' {
+			setPageAnimated(dvTpBase, RMS_SCHEDULING_PAGE, 'fade', 0, 40);
+		}
+	} else {
+		cancel_wait 'display';
+		setPageAnimated(dvTpBase, OFFLINE_PAGE, 'fade', 0, 20);
+	}
+}
+
+/**
  * Sets the room available state.
  *
  * @param	isInUse		a boolean, true if the room is in use
@@ -401,16 +419,11 @@ define_event
 channel_event[vdvRMS, RMS_CHANNEL_CLIENT_REGISTERED] {
 
 	on: {
-		setPageAnimated(dvTpBase, CONNECTED_PAGE, 'fade', 0, 2);
-		redraw();
-		wait 20 'display' {
-			setPageAnimated(dvTpBase, RMS_SCHEDULING_PAGE, 'fade', 0, 40);
-		}
+		setOnline(true);
 	}
 	
 	off: {
-		cancel_wait 'display';
-		setPageAnimated(dvTpBase, OFFLINE_PAGE, 'fade', 0, 20);
+		setOnline(false);
 	}
 
 }
@@ -418,7 +431,7 @@ channel_event[vdvRMS, RMS_CHANNEL_CLIENT_REGISTERED] {
 data_event[dvTp] {
 
 	online: {
-		redraw();
+		setOnline([vdvRMS, RMS_CHANNEL_CLIENT_REGISTERED]);
 	}
 
 }
