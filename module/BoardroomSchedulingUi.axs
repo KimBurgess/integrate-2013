@@ -430,11 +430,20 @@ define_function RmsEventSchedulingCreateResponse(char isDefaultLocation,
 				eventBookingResponse.startDate == lastBookingRequestDate) {
 			if (eventBookingResponse.isSuccessful) {
 				showPopupEx(dvTpBase, NFC_RESERVE_SUCCESS_VIEW_NAME, NFC_HOME_PAGE);
-				extractUserDetails(eventBookingResponse);
-				sendBookingConfirmation(activeUser, eventBookingResponse);
 			} else {
 				showPopupEx(dvTpBase, NFC_RESERVE_FAIL_VIEW_NAME, NFC_HOME_PAGE);
 			}
+		}
+
+		// This need to be handled seperately to allow the functionality
+		// provided by the stock UI to also shoot of confirmation emails.
+		// Unfortunately this also means that if a user is currently authed
+		// and a booking is made form another panel on this same client
+		// for the same location (e.g. an in room panel) the user will get
+		// a confirmation email.
+		// FIXME
+		if (activeUser && eventBookingResponse.isSuccessful) {
+			extractUserDetails(eventBookingResponse);
 		}
 
 	}
