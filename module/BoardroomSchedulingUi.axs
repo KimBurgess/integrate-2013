@@ -35,6 +35,7 @@ define_variable
 
 constant integer MEET_NOW_TIME = 10; // minutes
 
+// Button addresses
 constant integer MEETING_SUBJECT_VIEW_ADDRESS = 1;
 constant integer MEETING_ORGANISER_VIEW_ADDRESS = 2;
 constant integer MEETING_TIME_VIEW_ADDRESS = 3;
@@ -47,26 +48,25 @@ constant integer NFC_USER_IMAGE_VIEW_ADDRESS = 12;
 constant integer NFC_MEET_NOW_VIEW_ADDRESS = 20;
 constant integer NFC_BOOK_NEXT_VIEW_ADDRESS = 21;
 
-constant char RMS_SCHEDULING_PAGE[] = 'rmsSchedulingPage';
-constant char OFFLINE_PAGE[] = 'offline';
-constant char CONNECTED_PAGE[] = 'connected';
+// Page names
 constant char BLANK_PAGE[] = 'blank'
+constant char CONNECTED_PAGE[] = 'connected';
+constant char CONNECTING_PAGE[] = 'connecting'
+constant char NFC_HOME_PAGE[] = 'nfcHome';
+constant char CALENDAR_PAGE[] = 'rmsSchedulingPage';
+constant char ROOM_STATUS_PAGE[] = 'roomStatus';
+
+// Popups
 constant char MEETING_INFO_VIEW_NAME[] = 'rmsMeetingInfoCard';
-constant char IN_USE_INDICATOR_VIEW_NAME[] = 'rmsInUseIndicator';
 constant char AVAILABILITY_GUIDE_VIEW_NAME[] = 'rmsAvailabilityGuide';
-constant char NFC_TOUCH_ON_VIEW_NAME[] = 'nfcTouchOn';
-constant char NFC_USER_WELCOME_VIEW_NAME[] = 'nfcWelcome';
-constant char NFC_LOGOUT_VIEW_NAME[] = 'nfcLogOut';
-constant char NFC_HOME_VIEW_NAME[] = 'nfcHome';
-constant char NFC_MEET_NOW_VIEW_NAME[] = 'nfcShortcutNow';
-constant char NFC_BOOK_NEXT_VIEW_NAME[] = 'nfcShortcutNext';
-constant char NFC_RESERVE_REQUEST_VIEW_NAME[] = 'nfcShortcutRequest';
-constant char NFC_RESERVE_SUCCESS_VIEW_NAME[] = 'nfcShortcutSuccess';
-constant char NFC_RESERVE_FAIL_VIEW_NAME[] = 'nfcShortcutFail';
-constant char RMS_CALENDAR_VIEW_NAME[] = 'rmsCalendar';
+constant char NFC_USER_WELCOME_VIEW_NAME[] = 'nfcUserWelcome';
+constant char NFC_RESERVE_FAIL_VIEW_NAME[] = 'nfcFeedbackFail';
+constant char NFC_RESERVE_REQUESTING_VIEW_NAME[] = 'nfcFeedbackRequesting';
+constant char NFC_RESERVE_SUCCESS_VIEW_NAME[] = 'nfcFeedbackSuccess';
+constant char NFC_BOOK_NEXT_VIEW_NAME[] = 'nfcBookNext';
+constant char NFC_BOOK_NOW_VIEW_NAME[] = 'nfcBookNow';
 constant char RMS_MEETING_DETAILS_VIEW_NAME[] = 'rmsMeetingDetails';
 constant char RMS_MEETING_DOES_NOT_EXIST_VIEW_NAME[] = 'rmsMeetingDoesNotExist';
-constant char RMS_MEETING_REQUEST_VIEW_NAME[] = 'rmsMeetingRequest';
 constant char RMS_MESSAGE_VIEW_NAME[] = 'rmsMessage';
 
 volatile locationInfo uiLocation;
@@ -90,74 +90,58 @@ define_function init() {
 define_function redraw() {
 	local_var integer lastUser;
 
-	// No user currently authed
-	if (!activeUser) {
+	select {
 
-		// Hide all the stuff you need to be authed for
-		hidePopupEx(dvTpBase, RMS_CALENDAR_VIEW_NAME, RMS_SCHEDULING_PAGE);
-		hidePopupEx(dvTpBase, RMS_MEETING_DETAILS_VIEW_NAME, RMS_SCHEDULING_PAGE);
-		hidePopupEx(dvTpBase, RMS_MEETING_DOES_NOT_EXIST_VIEW_NAME, RMS_SCHEDULING_PAGE);
-		hidePopupEx(dvTpBase, RMS_MEETING_REQUEST_VIEW_NAME, RMS_SCHEDULING_PAGE);
-		hidePopupEx(dvTpBase, RMS_MESSAGE_VIEW_NAME, RMS_SCHEDULING_PAGE);
-		hidePopupEx(dvTpBase, NFC_LOGOUT_VIEW_NAME, RMS_SCHEDULING_PAGE);
-		hidePopupEx(dvTpBase, NFC_USER_WELCOME_VIEW_NAME, RMS_SCHEDULING_PAGE);
-		hidePopupEx(dvTpBase, NFC_MEET_NOW_VIEW_NAME, RMS_SCHEDULING_PAGE);
-		hidePopupEx(dvTpBase, NFC_RESERVE_REQUEST_VIEW_NAME, RMS_SCHEDULING_PAGE);
+		// We've got a new user signed on
+		active (activeUser && activeUser != lastUser): {
+			updateUserInfoView(activeUser);
 
-		// Show the persistant elements
-		showPopupEx(dvTpBase, NFC_TOUCH_ON_VIEW_NAME, RMS_SCHEDULING_PAGE);
-		showPopupEx(dvTpBase, IN_USE_INDICATOR_VIEW_NAME, RMS_SCHEDULING_PAGE);
-		showPopupEx(dvTpBase, AVAILABILITY_GUIDE_VIEW_NAME, RMS_SCHEDULING_PAGE);
+			showPopupEx(dvTpBase, NFC_USER_WELCOME_VIEW_NAME, NFC_HOME_PAGE);
 
-		// Show the meeting info card if there's any data of interest
-		select {
-
-			active (uiLocation.isInUse): {
-				updateMeetingInfoView(uiLocation.activeBooking, false);
-				showPopupEx(dvTpBase, MEETING_INFO_VIEW_NAME, RMS_SCHEDULING_PAGE);
+			// If we've got time for a 'meet now' before the next meeting give
+			// the option, otherwise just skip straight to the calendar
+			if ((uiLocation.nextBooking.minutesUntilStart > MEET_NOW_TIME ||
+					!uiLocationHasMoreBookings()) &&
+					!uiLocation.isInUse) {
+				showPopupEx(dvTpBase, NFC_BOOK_NOW_VIEW_NAME, NFC_HOME_PAGE);
+			} else {
+				showPopupEx(dvTpBase, NFC_BOOK_NEXT_VIEW_NAME, NFC_HOME_PAGE);
 			}
 
-			active (!uiLocation.isInUse && !uiLocationHasMoreBookings()): {
-				hidePopupEx(dvTpBase, MEETING_INFO_VIEW_NAME, RMS_SCHEDULING_PAGE);
+			setPageAnimated(dvTpBase, NFC_HOME_PAGE, 'fade', 0, 1);
+		}
+
+		// The same user is still logged in
+		active (activeUser): {
+			// Nothing to see here. User may be browsing on the
+			// rmsSchedulingPage so we'll just leave them alone.
+		}
+
+		// Nobody is around or seems to care to just show the room status info
+		active (1): {
+			showPopupEx(dvTpBase, AVAILABILITY_GUIDE_VIEW_NAME, ROOM_STATUS_PAGE);
+
+			// Show the meeting info card if there's any data of interest
+			select {
+
+				active (uiLocation.isInUse): {
+					updateMeetingInfoView(uiLocation.activeBooking, false);
+					showPopupEx(dvTpBase, MEETING_INFO_VIEW_NAME, ROOM_STATUS_PAGE);
+				}
+
+				active (!uiLocation.isInUse && !uiLocationHasMoreBookings()): {
+					hidePopupEx(dvTpBase, MEETING_INFO_VIEW_NAME, ROOM_STATUS_PAGE);
+				}
+
+				active (!uiLocation.isInUse): {
+					updateMeetingInfoView(uiLocation.nextBooking, true);
+					showPopupEx(dvTpBase, MEETING_INFO_VIEW_NAME, ROOM_STATUS_PAGE);
+				}
 			}
 
-			active (!uiLocation.isInUse): {
-				updateMeetingInfoView(uiLocation.nextBooking, true);
-				showPopupEx(dvTpBase, MEETING_INFO_VIEW_NAME, RMS_SCHEDULING_PAGE);
-			}
+			setPageAnimated(dvTpBase, ROOM_STATUS_PAGE, 'fade', 0, 2);
 		}
 
-	// We have a human (or a goat with an NFC chip)
-	} else {
-
-		// Only update this view on a user change to prevent issue with popup
-		// ordering
-		if (lastUser && (activeUser == lastUser)) {
-			return;
-		}
-
-		// Hide all the general access elements
-		hidePopupEx(dvTpBase, AVAILABILITY_GUIDE_VIEW_NAME, RMS_SCHEDULING_PAGE);
-		hidePopupEx(dvTpBase, MEETING_INFO_VIEW_NAME, RMS_SCHEDULING_PAGE);
-		hidePopupEx(dvTpBase, NFC_TOUCH_ON_VIEW_NAME, RMS_SCHEDULING_PAGE);
-		hidePopupEx(dvTpBase, IN_USE_INDICATOR_VIEW_NAME, RMS_SCHEDULING_PAGE);
-
-		updateUserInfoView(activeUser);
-
-		// And show the authed content
-		showPopupEx(dvTpBase, NFC_LOGOUT_VIEW_NAME, RMS_SCHEDULING_PAGE);
-		showPopupEx(dvTpBase, NFC_HOME_VIEW_NAME, RMS_SCHEDULING_PAGE);
-		showPopupEx(dvTpBase, NFC_USER_WELCOME_VIEW_NAME, RMS_SCHEDULING_PAGE);
-
-		// If we've got time for a 'meet now' before the next meeting give the
-		// option, otherwise just skip straight to the calendar
-		if ((uiLocation.nextBooking.minutesUntilStart > MEET_NOW_TIME ||
-				!uiLocationHasMoreBookings()) &&
-				!uiLocation.isInUse) {
-			showPopupEx(dvTpBase, NFC_MEET_NOW_VIEW_NAME, RMS_SCHEDULING_PAGE);
-		} else {
-			showPopupEx(dvTpBase, NFC_BOOK_NEXT_VIEW_NAME, RMS_SCHEDULING_PAGE);
-		}
 	}
 
 	lastUser = activeUser;
@@ -217,24 +201,25 @@ define_function updateUserInfoView(integer userId) {
  */
 define_function setOnline(char isOnline) {
 	if (isOnline) {
-		cancel_wait 'display';
+
+		cancel_wait 'systemOnlineAnimSequence';
 		setPageAnimated(dvTpBase, CONNECTED_PAGE, 'fade', 0, 2);
-		redraw();
-		wait 10 'display' {
+		wait 10 'systemOnlineAnimSequence' {
 			setPageAnimated(dvTpBase, BLANK_PAGE, 'fade', 0, 10);
-			wait 10 'display' {
-				setPageAnimated(dvTpBase, RMS_SCHEDULING_PAGE, 'fade', 0, 30);
+			wait 10 'systemOnlineAnimSequence' {
+				redraw();
 			}
 		}
+
 	} else {
-		cancel_wait 'display';
+
+		cancel_wait 'systemOnlineAnimSequence';
 		setPageAnimated(dvTpBase, BLANK_PAGE, 'fade', 0, 10);
-		wait 10 'display' {
-			setPageAnimated(dvTpBase, OFFLINE_PAGE, 'fade', 0, 20);	
+		wait 10 'systemOnlineAnimSequence' {
+			setPageAnimated(dvTpBase, CONNECTING_PAGE, 'fade', 0, 20);
 		}
+
 	}
-	
-	logout();
 }
 
 /**
@@ -289,7 +274,7 @@ define_function authenticate(char uid[]) {
 	playSound(dvTpBase, 'valid-id.wav');
 
 	activeUser = userId;
-	
+
 	RmsSetDefaultEventBookingSubject(getAdHocBookingSubject(activeUser));
 	RmsSetDefaultEventBookingBody(getAdHocBookingDetails(activeUser));
 
@@ -303,6 +288,10 @@ define_function authenticate(char uid[]) {
  */
 define_function logout() {
 	activeUser = 0;
+
+	// Tidy up any of the old status / meeting create popups from the seesion
+	hidePopupEx(dvTpBase, NFC_RESERVE_REQUESTING_VIEW_NAME, NFC_HOME_PAGE);
+	hidePopupEx(dvTpBase, RMS_MEETING_DETAILS_VIEW_NAME, CALENDAR_PAGE);
 
 	redraw();
 }
@@ -370,11 +359,10 @@ define_function createAdHocBooking(char startDate[10],
 			locationTracker.location.id);
 
 	lastBookingRequestDate = startDate
-	
+
 	// This is required as all booking responses will come back with the seconds
 	// at 00 which will screw up our string matching.
-	lastBookingRequestTime = "time_to_hour(startTime), ':',
-			time_to_minute(startTime), ':00'";
+	lastBookingRequestTime = "left_string(startTime, 6), '00'";
 }
 
 
@@ -434,21 +422,21 @@ define_function RmsEventSchedulingCreateResponse(char isDefaultLocation,
 		char responseText[],
 		RmsEventBookingResponse eventBookingResponse) {
 	if (eventBookingResponse.location = locationTracker.location.id) {
-	
+
 		// Make sure(ish) that this a response to something that was requested
 		// from this UI.
 		if (activeUser &&
 				eventBookingResponse.startTime == lastBookingRequestTime &&
 				eventBookingResponse.startDate == lastBookingRequestDate) {
 			if (eventBookingResponse.isSuccessful) {
-				showPopupEx(dvTpBase, NFC_RESERVE_SUCCESS_VIEW_NAME, RMS_SCHEDULING_PAGE);
+				showPopupEx(dvTpBase, NFC_RESERVE_SUCCESS_VIEW_NAME, NFC_HOME_PAGE);
 				extractUserDetails(eventBookingResponse);
 				sendBookingConfirmation(activeUser, eventBookingResponse);
 			} else {
-				showPopupEx(dvTpBase, NFC_RESERVE_FAIL_VIEW_NAME, RMS_SCHEDULING_PAGE);
+				showPopupEx(dvTpBase, NFC_RESERVE_FAIL_VIEW_NAME, NFC_HOME_PAGE);
 			}
 		}
-		
+
 	}
 }
 
@@ -474,8 +462,9 @@ channel_event[vdvRMS, RMS_CHANNEL_CLIENT_REGISTERED] {
 	on: {
 		setOnline(true);
 	}
-	
+
 	off: {
+		logout();
 		setOnline(false);
 	}
 
@@ -485,6 +474,10 @@ data_event[dvTp] {
 
 	online: {
 		setOnline([vdvRMS, RMS_CHANNEL_CLIENT_REGISTERED]);
+	}
+
+	offline: {
+		logout();
 	}
 
 }
@@ -501,7 +494,7 @@ button_event[dvTp, NFC_MEET_NOW_VIEW_ADDRESS] {
 
 	push: {
 		createAdHocBooking(LDATE,
-				TIME, 
+				TIME,
 				MEET_NOW_TIME);
 	}
 
