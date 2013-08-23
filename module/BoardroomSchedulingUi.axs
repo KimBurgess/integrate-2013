@@ -1,4 +1,4 @@
-MODULE_NAME='BoardroomSchedulingUi'(dev vdvRMS, dev dvTp, dev dvTpBase, integer tempLocationId, char tempLocationName[50])
+MODULE_NAME='BoardroomSchedulingUi'(dev vdvRms, dev vdvRmsGui, dev dvTp, dev dvTpBase, integer tempLocationId, char tempLocationName[50])
 
 
 #DEFINE INCLUDE_SCHEDULING_NEXT_ACTIVE_RESPONSE_CALLBACK
@@ -15,6 +15,7 @@ MODULE_NAME='BoardroomSchedulingUi'(dev vdvRMS, dev dvTp, dev dvTpBase, integer 
 #INCLUDE 'TpEventListener'
 #INCLUDE 'TimeUtil'
 #INCLUDE 'User'
+#INCLUDE 'RmsGuiApi'
 #INCLUDE 'RmsBookingUserAssociation'
 #INCLUDE 'RmsAssetLocationTracker'
 #INCLUDE 'RmsSchedulingApi'
@@ -101,6 +102,7 @@ define_function redraw() {
 		hidePopupEx(dvTpBase, NFC_LOGOUT_VIEW_NAME, RMS_SCHEDULING_PAGE);
 		hidePopupEx(dvTpBase, NFC_USER_WELCOME_VIEW_NAME, RMS_SCHEDULING_PAGE);
 		hidePopupEx(dvTpBase, NFC_MEET_NOW_VIEW_NAME, RMS_SCHEDULING_PAGE);
+		hidePopupEx(dvTpBase, NFC_RESERVE_REQUEST_VIEW_NAME, RMS_SCHEDULING_PAGE);
 
 		// Show the persistant elements
 		showPopupEx(dvTpBase, NFC_TOUCH_ON_VIEW_NAME, RMS_SCHEDULING_PAGE);
@@ -287,6 +289,9 @@ define_function authenticate(char uid[]) {
 	playSound(dvTpBase, 'valid-id.wav');
 
 	activeUser = userId;
+	
+	RmsSetDefaultEventBookingSubject(getAdHocBookingSubject(activeUser));
+	RmsSetDefaultEventBookingBody(getAdHocBookingDetails(activeUser));
 
 	redraw();
 
@@ -300,33 +305,6 @@ define_function logout() {
 	activeUser = 0;
 
 	redraw();
-}
-
-/**
- * Create an adhoc apointment for right now.
- */
-define_function meetNow() {
-	RmsBookingCreate(LDATE,
-			TIME,
-			MEET_NOW_TIME,
-			'Ad-hoc meeting',
-			insertUserDetails('', activeUser),
-			locationTracker.location.id);
-}
-
-/**
- * Reserve the next available time slot.
- */
-define_function bookNext() {
-	// TODO there should probably be a little more smarts here to make sure
-	// there isn't a back to back meeting.
-	// FIXME this will break is someone makes a booking at 11:59pm.
-	RmsBookingCreate(uiLocation.activeBooking.endDate,
-			nextMinute(uiLocation.activeBooking.endTime),
-			MEET_NOW_TIME,
-			'Ad-hoc meeting',
-			insertUserDetails('', activeUser),
-			locationTracker.location.id);
 }
 
 /**
@@ -367,6 +345,36 @@ define_function sendBookingConfirmation(integer userId,
 define_function char uiLocationHasMoreBookings() {
 	return !((uiLocation.nextBooking.bookingId == uiLocation.activeBooking.bookingId) ||
 			uiLocation.nextBooking.bookingId = '');
+}
+
+
+/**
+ * Requests an ad-hoc meeting reservation for the active user.
+ *
+ * @param	startDate		the meeting start date (LDATE format)
+ * @param	startTime		the meeting start time (TIME format)
+ * @param	length			the meeting length in minutes
+ */
+define_function createAdHocBooking(char startDate[10],
+		char startTime[8],
+		integer length) {
+	if (!activeUser) {
+		return;
+	}
+
+	RmsBookingCreate(startDate,
+			startTime,
+			length,
+			getAdHocBookingSubject(activeUser),
+			getAdHocBookingDetails(activeUser),
+			locationTracker.location.id);
+
+	lastBookingRequestDate = startDate
+	
+	// This is required as all booking responses will come back with the seconds
+	// at 00 which will screw up our string matching.
+	lastBookingRequestTime = "time_to_hour(startTime), ':',
+			time_to_minute(startTime), ':00'";
 }
 
 
@@ -492,7 +500,9 @@ button_event[dvTp, NFC_LOGOUT_VIEW_ADDRESS] {
 button_event[dvTp, NFC_MEET_NOW_VIEW_ADDRESS] {
 
 	push: {
-		meetNow();
+		createAdHocBooking(LDATE,
+				TIME, 
+				MEET_NOW_TIME);
 	}
 
 }
@@ -500,7 +510,9 @@ button_event[dvTp, NFC_MEET_NOW_VIEW_ADDRESS] {
 button_event[dvTp, NFC_BOOK_NEXT_VIEW_ADDRESS] {
 
 	push: {
-		bookNext();
+		createAdHocBooking(uiLocation.activeBooking.endDate,
+				nextMinute(uiLocation.activeBooking.endTime),
+				MEET_NOW_TIME);
 	}
 
 }

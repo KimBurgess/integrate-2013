@@ -13,9 +13,9 @@ PROGRAM_NAME='RmsBookingUserAssociation'
 define_variable
 
 constant char NFC_BOOKING_NAME_PLACEHOLDER[] = '<name>';
-constant char NFC_BOOKING_DESCRIPTION_EXTERNAL[] = 'Ad-hoc meeting created by <name> from touch panel booking system.';
-constant char NFC_BOOKING_DESCRIPTION_INTERNAL[] = 'Ad-hoc meeting created from touch panel booking system.';
-
+constant char NFC_BOOKING_SUBJECT_EXTERNAL[] = '<name> (ad-hoc meeting)';
+constant char NFC_BOOKING_SUBJECT_INTERNAL[] = 'Ad-hoc meeting';
+constant char NFC_BOOKING_DESCRIPTION[] = 'Ad-hoc meeting created from touch panel booking system.';
 
 
 /**
@@ -30,59 +30,53 @@ constant char NFC_BOOKING_DESCRIPTION_INTERNAL[] = 'Ad-hoc meeting created from 
  * @return					a boolean, true if a user was extracted
  */
 define_function char extractUserDetails(RmsEventBookingResponse booking) {
-	stack_var char left[256];
-	stack_var char right[256];
+	stack_var integer start;
+	stack_var integer end;
 	stack_var char name[64];
 
-	left = string_get_key(NFC_BOOKING_DESCRIPTION_EXTERNAL,
-			NFC_BOOKING_NAME_PLACEHOLDER);
-	right = string_get_value(NFC_BOOKING_DESCRIPTION_EXTERNAL,
-			NFC_BOOKING_NAME_PLACEHOLDER);
-	name = string_get_between(booking.details, left, right);
+	start = find_string(NFC_BOOKING_SUBJECT_EXTERNAL,
+			NFC_BOOKING_NAME_PLACEHOLDER,
+			1);
+	end = length_string(booking.subject) + 1 - 
+			find_string(string_reverse(NFC_BOOKING_SUBJECT_EXTERNAL),
+					string_reverse(NFC_BOOKING_NAME_PLACEHOLDER),
+					1);
+	name = mid_string(booking.subject,
+			start,
+			end - start + 1);
 
 	if (name == '') {
 		return false;
 	}
 
 	booking.organizer = name;
-	booking.details = NFC_BOOKING_DESCRIPTION_INTERNAL;
+	booking.subject = NFC_BOOKING_SUBJECT_INTERNAL;
 
 	return true;
 }
 
 /**
- * Insert parsable (and human readable) user details into a meeting details
- * string.
+ * Gets the contents of a subject field to use when creating ad-hoc bookings.
  *
- * @param	details			the existing meeting details string
- * @param	userId			the internal userId
- * @return					an updated details string that can be used when
- *							creating a booking to enable the associated user
- *							to be identified
+ * @param	userId			the system user id to associate with the booking
+ * @return					a string to use in the subject for the booking
+ *							request
  */
-define_function char[1024] insertUserDetails(char details[], integer userId) {
-	stack_var char CRLF[2];
-	stack_var char left[256];
-	stack_var char right[256];
-	stack_var char ret[1024];
+define_function char[250] getAdHocBookingSubject(integer userId) {
+	return string_replace(NFC_BOOKING_SUBJECT_EXTERNAL,
+			NFC_BOOKING_NAME_PLACEHOLDER,
+			getUserName(userId));
+}
 
-	if (!userExists(userId)) {
-		return details;
-	}
-
-	CRLF = "$0A, $0D";
-	left = string_get_key(NFC_BOOKING_DESCRIPTION_EXTERNAL,
-			NFC_BOOKING_NAME_PLACEHOLDER);
-	right = string_get_value(NFC_BOOKING_DESCRIPTION_EXTERNAL,
-			NFC_BOOKING_NAME_PLACEHOLDER);
-
-	if (trim(details) != '') {
-		ret = "details, CRLF, CRLF, left, getUserName(userId), right";
-	} else {
-		ret = "left, getUserName(userId), right";
-	}
-
-	return ret;
+/**
+ * Gets the contents of a details field to use when creating ad-hoc bookings.
+ *
+ * @param	userId			the system user id to associate with the booking
+ * @return					a string to use in the details for the booking
+ *							request
+ */
+define_function char[250] getAdHocBookingDetails(integer userId) {
+	return NFC_BOOKING_DESCRIPTION;
 }
 
 #END_IF // __RMS_BOOKING_USER_ASSOCIATION__
