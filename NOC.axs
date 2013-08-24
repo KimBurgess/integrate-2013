@@ -8,9 +8,9 @@ dvMaster = 0:1:0
 
 // RMS demo touch panels
 dvDemo1Tp = 10001:1:0
-dvDemo1TpRms = 10001:9:0
+dvDemo1TpRms = 10001:7:0
 dvDemo2Tp = 10002:1:0
-dvDemo2TpRms = 10002:9:0
+dvDemo2TpRms = 10002:7:0
 
 // Remote scheduling panels
 dvBoardroomSchedulingTp = 10005:1:0
@@ -60,26 +60,38 @@ define_module 'RmsTouchPanelMonitor' mdlRmsBoardroomSchedulingTp(vdvRms,
 
 define_module 'RmsClientGui_dr4_0_0' mdlRmsGui(vdvRmsGui, rmsTpRms, rmsTp);
 
-define_module 'BoardroomSchedulingUi' mdlBoardroomUi(vdvRMS,
+define_module 'BoardroomSchedulingUi' mdlBoardroomUi(vdvRms,
 		vdvRmsGui,
 		dvBoardroomSchedulingTpRmsExtended,
 		dvBoardroomSchedulingTp,
 		rmsLocationBoardroomId,
 		rmsLocationBoardroomName);
 
-define_module 'RmsDemoUi' mdlRmsDemo1(vdvRMS,
+define_module 'RmsDemoUi' mdlRmsDemo1(vdvRms,
 		vdvRmsGui,
 		dvDemo1Tp,
 		dvDemo1Tp,
 		rmsLocationDemo1Id,
 		rmsLocationDemo1Name);
 
-define_module 'RmsDemoUi' mdlRmsDemo2(vdvRMS,
+define_module 'RmsDemoUi' mdlRmsDemo2(vdvRms,
 		vdvRmsGui,
 		dvDemo2Tp,
 		dvDemo2Tp,
 		rmsLocationDemo2Id,
 		rmsLocationDemo2Name);
 
-define_module 'RmsSchedulingEventLogger' mdlRmsSchedulingLogger(vdvRMS);
+define_module 'RmsSchedulingEventLogger' mdlRmsSchedulingLogger(vdvRms);
+
+
+define_event
+
+data_event[vdvRms] {
+
+	online: {
+		// turn on heartattach so that we have a nice response time for messages
+		send_command vdvRms, '@config.client.heartattack-true,3';
+	}
+
+}
 
