@@ -41,6 +41,10 @@ volatile dev rmsTp[] = {
 // touch panel RMS location information (temp only due to bug in SDK v4.1.13)
 volatile integer rmsLocationBoardroomId = 29;
 volatile char rmsLocationBoardroomName[] = 'Integrate Boardroom';
+volatile integer rmsLocationDemo1Id = 33;
+volatile char rmsLocationDemo1Name[] = 'Integrate Demo Pod - RMS 1';
+volatile integer rmsLocationDemo2Id = 34;
+volatile char rmsLocationDemo2Name[] = 'Integrate Demo Pod - RMS 2';
 
 
 define_module 'RmsNetLinxAdapter_dr4_0_0' mdlRms(vdvRms);
@@ -62,6 +66,20 @@ define_module 'BoardroomSchedulingUi' mdlBoardroomUi(vdvRMS,
 		dvBoardroomSchedulingTp,
 		rmsLocationBoardroomId,
 		rmsLocationBoardroomName);
+
+define_module 'RmsDemoUi' mdlRmsDemo1(vdvRMS,
+		vdvRmsGui,
+		dvDemo1Tp,
+		dvDemo1Tp,
+		rmsLocationDemo1Id,
+		rmsLocationDemo1Name);
+
+define_module 'RmsDemoUi' mdlRmsDemo2(vdvRMS,
+		vdvRmsGui,
+		dvDemo2Tp,
+		dvDemo2Tp,
+		rmsLocationDemo2Id,
+		rmsLocationDemo2Name);
 
 define_module 'RmsSchedulingEventLogger' mdlRmsSchedulingLogger(vdvRMS);
 

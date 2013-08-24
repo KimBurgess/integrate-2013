@@ -214,6 +214,10 @@
 <FilePathName>module\BoardroomSchedulingUi.axs</FilePathName>
 <Comments></Comments>
 </File>
+<File CompileType="Netlinx" Type="Module"><Identifier>RmsDemoUi</Identifier>
+<FilePathName>module\RmsDemoUi.axs</FilePathName>
+<Comments></Comments>
+</File>
 <File CompileType="Netlinx" Type="MasterSrc"><Identifier>NOC</Identifier>
 <FilePathName>NOC.axs</FilePathName>
 <Comments></Comments>
@@ -223,6 +227,10 @@
 <Comments></Comments>
 <DeviceMap DevAddr="dvBoardroomSchedulingTp"><DevName>dvBoardroomSchedulingTp</DevName>
 </DeviceMap>
+</File>
+<File CompileType="None" Type="TP4"><Identifier>rmsDemo</Identifier>
+<FilePathName>ui\rmsDemo.TP4</FilePathName>
+<Comments></Comments>
 </File>
 <File CompileType="None" Type="Other"><Identifier>users</Identifier>
 <FilePathName>users.txt</FilePathName>
