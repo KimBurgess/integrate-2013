@@ -231,6 +231,10 @@
 <File CompileType="None" Type="TP4"><Identifier>rmsDemo</Identifier>
 <FilePathName>ui\rmsDemo.TP4</FilePathName>
 <Comments></Comments>
+<DeviceMap DevAddr="dvDemo1Tp"><DevName>dvDemo1Tp</DevName>
+</DeviceMap>
+<DeviceMap DevAddr="dvDemo2Tp"><DevName>dvDemo2Tp</DevName>
+</DeviceMap>
 </File>
 <File CompileType="None" Type="Other"><Identifier>users</Identifier>
 <FilePathName>users.txt</FilePathName>
