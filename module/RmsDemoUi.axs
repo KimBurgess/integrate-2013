@@ -10,6 +10,7 @@ MODULE_NAME='RmsDemoUi'(dev vdvRMS, dev vdvRmsGui, dev dvTp, dev dvTpBase, integ
 #INCLUDE 'TpEventListener'
 #INCLUDE 'RmsApi'
 #INCLUDE 'RmsGuiApi'
+#INCLUDE 'RmsBookingUserAssociation'
 #INCLUDE 'RmsAssetLocationTracker'
 
 
@@ -23,15 +24,17 @@ constant char STANDBY_PAGE[] = 'standby';
 constant char MAIN_PAGE[] = 'rmsSchedulingPage';
 constant char TECH_PAGE[] = 'tech'
 
+// Popups
+constant char LOG_OFF_GESTURE_AREA_VIEW_NAME[] = 'logOffGestureArea';
+
 // Button addresses
 constant integer START_VIEW_ADDRESS = 1;
 constant integer END_VIEW_ADDRESS = 2;
 constant integer HELP_REQUEST_VIEW_ADDRESS = 10;
+constant integer MAINTENANCE_REQUEST_VIEW_ADDRESS = 11;
 
 // Keyboard messages
-constant char MAINTENANCE_REQUEST_RETURN = 'MAINT.REQUEST';
-
-volatile char systemInUse;
+constant char MAINTENANCE_REQUEST_RETURN[] = 'MAINT.REQUEST';
 
 volatile integer activeUser;
 
@@ -50,17 +53,13 @@ define_function init() {
 define_function redraw() {
 	select {
 
-		// System standby
-		active (!systemInUse): {
-			setPageAnimated(dvTpBase, STANDBY_PAGE, 'fade', 0, 2);
-		}
-
-		active (systemInUse && activeUser): {
-			setPageAnimated(dvTpBase, TECH_PAGE, 'fade', 0, 1);
-		}
-
-		active (systemInUse && !activeUser): {
+		active (activeUser): {
+			showPopupEx(dvTpBase, LOG_OFF_GESTURE_AREA_VIEW_NAME, MAIN_PAGE);
 			setPageAnimated(dvTpBase, MAIN_PAGE, 'fade', 0, 1);
+		}
+
+		active (!activeUser): {
+			setPageAnimated(dvTpBase, STANDBY_PAGE, 'fade', 0, 1);
 		}
 
 	}
@@ -96,17 +95,6 @@ define_function setOnline(char isOnline) {
 }
 
 /**
- * Sets the system in use state.
- *
- * @param	isInUse			a boolean, true if we've got a demo going
- */
-define_function setInUse(char isInUse) {
-	systemInUse = isInUse;
-	redraw();
-}
-
-
-/**
  * Attempt to authenticate an NFC user.
  *
  * @param	uid			the captured uid
@@ -127,6 +115,15 @@ define_function authenticate(char uid[]) {
 	
 	RmsSetDefaultEventBookingSubject(getAdHocBookingSubject(activeUser));
 	RmsSetDefaultEventBookingBody(getAdHocBookingDetails(activeUser));
+
+	redraw();
+}
+
+/**
+ * Deauth any currently logged in users.
+ */
+define_function logout() {
+	activeUser = 0;
 
 	redraw();
 }
@@ -183,8 +180,8 @@ data_event[dvTp] {
 		stack_var char value[512];
 
 
-		key = string_get_key(data.text);
-		value = string_get_value(data.text);
+		key = string_get_key(data.text, '-');
+		value = string_get_value(data.text, '-');
 		
 		select {
 			
@@ -197,26 +194,26 @@ data_event[dvTp] {
 
 }
 
-button_event[dvTp, START_VIEW_ADDRESS] {
-
-	push: {
-		setInUse(true);
-	}
-
-}
-
 button_event[dvTp, END_VIEW_ADDRESS] {
 
 	push: {
-		setInUse(false);
+		logout();
 	}
 
 }
 
-button_event[dvTp, SUBMIT_HELP_REQUEST_VIEW_ADDRESS] {
+button_event[dvTp, HELP_REQUEST_VIEW_ADDRESS] {
 
 	push: {
 		RmsSendHelpRequest('Help me!');
+	}
+
+}
+
+button_event[dvTp, MAINTENANCE_REQUEST_VIEW_ADDRESS] {
+
+	push: {
+		RmsSendMaintenanceRequest('Room maintenance required.');
 	}
 
 }
