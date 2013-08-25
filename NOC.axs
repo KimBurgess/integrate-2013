@@ -8,9 +8,9 @@ dvMaster = 0:1:0
 
 // RMS demo touch panels
 dvDemo1Tp = 10001:1:0
-dvDemo1TpRms = 10001:7:0
+dvDemo1TpRms = 10001:9:0
 dvDemo2Tp = 10002:1:0
-dvDemo2TpRms = 10002:7:0
+dvDemo2TpRms = 10002:9:0
 
 // Remote scheduling panels
 dvBoardroomSchedulingTp = 10005:1:0
