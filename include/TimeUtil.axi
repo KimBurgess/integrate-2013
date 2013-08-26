@@ -116,7 +116,7 @@ define_function char[8] nextMinute(char timeStr[8]) {
 	hours = time_to_hour(timeStr);
 	minutes = time_to_minute(timeStr);
 	seconds = time_to_second(timeStr);
-	
+
 	minutes = minutes + 1;
 	if (minutes >= 60) {
 		minutes = 0;
@@ -125,6 +125,36 @@ define_function char[8] nextMinute(char timeStr[8]) {
 			hours = 0;
 		}
 	}
-	
+
 	return "format('%02d', hours), ':', format('%02d', minutes), ':', format('%02d', seconds)";
+}
+
+define_function char timeIsInFuture(char timeStr[8]) {
+	sinteger hours;
+	sinteger minutes;
+	sinteger seconds;
+	sinteger nowHours;
+	sinteger nowMinutes;
+	sinteger nowSeconds;
+
+	hours = time_to_hour(timeStr);
+	minutes = time_to_minute(timeStr);
+	seconds = time_to_second(timeStr);
+	nowHours = time_to_hour(TIME);
+	nowMinutes = time_to_minute(TIME);
+	nowSeconds = time_to_second(TIME);
+
+	if (nowHours > hours) {
+		return true;
+	} else if (nowHours == hours) {
+		if(nowMinutes > minutes) {
+			return true;
+		} else if (nowMinutes == minutes) {
+			if (nowSeconds > nowSeconds) {
+				return true;
+			}
+		}
+	}
+	
+	return false;
 }

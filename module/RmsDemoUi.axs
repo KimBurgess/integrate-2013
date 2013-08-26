@@ -144,6 +144,12 @@ define_function submitMaintenanceRequest(integer userId, char msg[]) {
 
 define_function NfcTagRead(integer tagType, char uid[], integer uidLength) {
 	if (!activeUser) {
+
+		// Check for an updated users.txt 
+		if (!getUserIdFromNfcUid(uid)) {
+			loadSystemUsersFromFile('users.txt');
+		}
+
 		authenticate(uid);
 	}
 }

@@ -434,18 +434,25 @@ define_function RmsEventSchedulingCreateResponse(char isDefaultLocation,
 				showPopupEx(dvTpBase, NFC_RESERVE_FAIL_VIEW_NAME, NFC_HOME_PAGE);
 			}
 		}
+		
+		if (eventBookingResponse.isSuccessful) {
+			// This need to be handled seperately to allow the functionality
+			// provided by the stock UI to also shoot of confirmation emails.
+			// Unfortunately this also means that if a user is currently authed
+			// and a booking is made form another panel on this same client
+			// for the same location (e.g. an in room panel) the user will get
+			// a confirmation email.
+			// FIXME
+			if (activeUser) {
+				sendBookingConfirmation(activeUser, eventBookingResponse);
+			}
 
-		// This need to be handled seperately to allow the functionality
-		// provided by the stock UI to also shoot of confirmation emails.
-		// Unfortunately this also means that if a user is currently authed
-		// and a booking is made form another panel on this same client
-		// for the same location (e.g. an in room panel) the user will get
-		// a confirmation email.
-		// FIXME
-		if (activeUser && eventBookingResponse.isSuccessful) {
-			extractUserDetails(eventBookingResponse);
+			// Update the active meeting info if the booking is for now
+			if (eventBookingResponse.startDate == LDATE &&
+					!timeIsInFuture(eventBookingResponse.startTime)) {
+				setActiveMeetingInfo(eventBookingResponse);
+			}
 		}
-
 	}
 }
 
@@ -454,6 +461,12 @@ define_function RmsEventSchedulingCreateResponse(char isDefaultLocation,
 
 define_function NfcTagRead(integer tagType, char uid[], integer uidLength) {
 	if (!activeUser) {
+
+		// Check for an updated users.txt 
+		if (!getUserIdFromNfcUid(uid)) {
+			loadSystemUsersFromFile('users.txt');
+		}
+	
 		authenticate(uid);
 	}
 }
