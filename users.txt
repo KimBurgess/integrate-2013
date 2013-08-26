@@ -5,7 +5,7 @@
 #     <nfcUid>,<name>,<email address>
 #
 
-,Amit Singh,amit.singh@amxaustralia.com.au
+D512CB00,Amit Singh,amit.singh@amxaustralia.com.au
 ,Anthony Lee,anthony.lee@amxaustralia.com.au
 ,Bree Cassidy,bree.cassidy@amxaustralia.com.au>
 ,Carolyn Mather,carolyn.mather@amxaustralia.com.au>
@@ -14,27 +14,28 @@
 ,Cindy Harrington,cindy.harrington@amxaustralia.com.au
 ,Dave Francis,david.francis@amxaustralia.com.au
 9518CB00,David Vine,david.vine@amxaustralia.com.au
-,Graham Barrett,graham.barrett@amxaustralia.com.au
-,Graham Evans,graham.evans@amxaustralia.com.au
-,James Murray,James.Murray@amxaustralia.com.au
-,Jared Walley,Jared.Walley@amxaustralia.com.au
+2540CB00,Graham Barrett,graham.barrett@amxaustralia.com.au
+D514CB00,Graham Evans,graham.evans@amxaustralia.com.au
+E512CB00,James Murray,James.Murray@amxaustralia.com.au
+1540CB00,Jared Walley,Jared.Walley@amxaustralia.com.au
 ,Jim Maciejewski,jim.maciejewski@amxaustralia.com.au
 ,Jim Olsen,Jim.Olsen@amxaustralia.com.au
 ,Kate Suttie,Kate.Suttie@amxaustralia.com.au
-,Kenyon Page,Kenyon.Page@amxaustralia.com.au
+C518CB00,Kenyon Page,Kenyon.Page@amxaustralia.com.au
 0541CB00,Kim Burgess,Kim.Burgess@amxaustralia.com.au
-,Kit Davidson,Kit.Davidson@amxaustralia.com.au
-,Marc Braganca,Marc.Braganca@amxaustralia.com.au
+8569D200,Kit Davidson,Kit.Davidson@amxaustralia.com.au
+956ED200,Marc Braganca,Marc.Braganca@amxaustralia.com.au
 ,Mark Culverwell,mark.culverwell@amxaustralia.com.au
 ,Mark Cumner,Mark.Cumner@amxaustralia.com.au
-,Peter Swanson,Peter.Swanson@amxaustralia.com.au
-,Phil Dunn,Phil.Dunn@amxaustralia.com.au
+E516CB00,Peter Swanson,Peter.Swanson@amxaustralia.com.au
+856BD200,Phil Dunn,Phil.Dunn@amxaustralia.com.au
 ,Robert Watson,Robert.Watson@amxaustralia.com.au
-,Rod Driscoll,Rod.Driscoll@amxaustralia.com.au
+B518CB00,Rod Driscoll,Rod.Driscoll@amxaustralia.com.au
 ,Scott Pyke,scott.pyke@amxaustralia.com.au
-,Shaun Lyons,Shaun.Lyons@amxaustralia.com.au
-,Simon Brewer,Simon.Brewer@amxaustralia.com.au
-,Stephanie Henriksen,stephanie.henriksen@amxaustralia.com.au
-,Quentin White,quentin.white@amxnewzealand.co.nz
-,Richard Nagle,richard.nagle@amxnewzealand.co.nz
+1542CB00,Simon Brewer,Simon.Brewer@amxaustralia.com.au
+C510CB00,Stephanie Henriksen,stephanie.henriksen@amxaustralia.com.au
+C56FD200,Quentin White,quentin.white@amxnewzealand.co.nz
+1568D200,Richard Nagle,richard.nagle@amxnewzealand.co.nz
+D516CB00,Eric Neilson,eric.neilson@amx.com
+B510CB00,Paul Krizan,paul.krizan@amx.com
 
