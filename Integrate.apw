@@ -190,8 +190,16 @@
 <FilePathName>lib\RMS\monitors\RmsControlSystemMonitor.axs</FilePathName>
 <Comments></Comments>
 </File>
+<File CompileType="Netlinx" Type="Module"><Identifier>RmsPowerDistributionUnitMonitor</Identifier>
+<FilePathName>lib\RMS\monitors\RmsPowerDistributionUnitMonitor.axs</FilePathName>
+<Comments></Comments>
+</File>
 <File CompileType="Netlinx" Type="Module"><Identifier>RmsTouchPanelMonitor</Identifier>
 <FilePathName>lib\RMS\monitors\RmsTouchPanelMonitor.axs</FilePathName>
+<Comments></Comments>
+</File>
+<File CompileType="Netlinx" Type="Module"><Identifier>RmsVirtualDeviceMonitor</Identifier>
+<FilePathName>lib\RMS\monitors\RmsVirtualDeviceMonitor.axs</FilePathName>
 <Comments></Comments>
 </File>
 <File CompileType="None" Type="DUET"><Identifier>RmsClientGui_dr4_0_0</Identifier>
