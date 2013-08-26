@@ -106,8 +106,6 @@ define_function char[7] time12Hour(char timeStr[8]) {
 	return "format('%d', hours), ':', format('%02d', minutes), period";
 }
 
-
-
 define_function char[8] nextMinute(char timeStr[8]) {
 	sinteger hours;
 	sinteger minutes;

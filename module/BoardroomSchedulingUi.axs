@@ -35,6 +35,8 @@ define_variable
 
 constant integer MEET_NOW_TIME = 10; // minutes
 
+constant integer AUTO_LOGOUT_DELAY = 40; // seconds
+
 // Button addresses
 constant integer MEETING_SUBJECT_VIEW_ADDRESS = 1;
 constant integer MEETING_ORGANISER_VIEW_ADDRESS = 2;
@@ -68,6 +70,8 @@ constant char NFC_BOOK_NOW_VIEW_NAME[] = 'nfcBookNow';
 constant char RMS_MEETING_DETAILS_VIEW_NAME[] = 'rmsMeetingDetails';
 constant char RMS_MEETING_DOES_NOT_EXIST_VIEW_NAME[] = 'rmsMeetingDoesNotExist';
 constant char RMS_MESSAGE_VIEW_NAME[] = 'rmsMessage';
+
+constant long AUTO_LOGOUT_TL = 1;
 
 volatile locationInfo uiLocation;
 
@@ -280,7 +284,7 @@ define_function authenticate(char uid[]) {
 
 	redraw();
 
-	// TODO start timeline and auto log out after 45 seconds of no activity
+	restartAutoLogOutTimer();
 }
 
 /**
@@ -363,6 +367,21 @@ define_function createAdHocBooking(char startDate[10],
 	// This is required as all booking responses will come back with the seconds
 	// at 00 which will screw up our string matching.
 	lastBookingRequestTime = "left_string(startTime, 6), '00'";
+}
+
+/**
+ * Restarts the auto-logout timer.
+ */
+define_function restartAutoLogOutTimer() {
+	stack_var long times[1];
+	
+	times[1] = AUTO_LOGOUT_DELAY * 1000;
+	
+	if (timeline_active(AUTO_LOGOUT_TL)) {
+		timeline_kill(AUTO_LOGOUT_TL);
+	}
+	
+	timeline_create(AUTO_LOGOUT_TL, times, 1, TIMELINE_ABSOLUTE, TIMELINE_ONCE);
 }
 
 
@@ -530,4 +549,30 @@ button_event[dvTp, NFC_BOOK_NEXT_VIEW_ADDRESS] {
 				MEET_NOW_TIME);
 	}
 
+}
+
+button_event[dvTp, 0] {
+
+	push: {
+		restartAutoLogOutTimer();
+	}
+
+}
+
+// This is super, super hacky but will make sure that interactions with the
+// stock Rms Gui module control elements also reset the timer. If you are
+// reading this / having to deal with any consequences of it, sorry. I'll buy
+// you a beer some time.
+button_event[dvTp.number:9:dvTp.system, 0] {
+
+	push: {
+		restartAutoLogOutTimer();
+	}
+
+}
+
+timeline_event[AUTO_LOGOUT_TL] {
+	if (activeUser) {
+		logout();
+	}
 }
