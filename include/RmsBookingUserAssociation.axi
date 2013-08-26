@@ -67,7 +67,7 @@ define_function char bookingHasUserEmbedded(RmsEventBookingResponse booking) {
 	// show.
 	stack_var integer len;
 	
-	len = length_string(NFC_BOOKING_SUBJECT_EXTERNAL) -
+	len = 1 + length_string(NFC_BOOKING_SUBJECT_EXTERNAL) -
 			length_string(NFC_BOOKING_NAME_PLACEHOLDER);
 
 	return right_string(NFC_BOOKING_SUBJECT_EXTERNAL, len) == right_string(booking.subject, len);
