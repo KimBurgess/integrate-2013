@@ -65,12 +65,13 @@ define_function char bookingHasUserEmbedded(RmsEventBookingResponse booking) {
 	// FIXME This is a little hacky as it will break if we change the format of 
 	// NFC_BOOKING_SUBJECT_EXTERNAL however it will get us up and going for the
 	// show.
-	stack_var integer len;
-	
-	len = 1 + length_string(NFC_BOOKING_SUBJECT_EXTERNAL) -
-			length_string(NFC_BOOKING_NAME_PLACEHOLDER);
-
-	return right_string(NFC_BOOKING_SUBJECT_EXTERNAL, len) == right_string(booking.subject, len);
+	if (find_string(booking.subject,
+			string_replace(NFC_BOOKING_SUBJECT_EXTERNAL, NFC_BOOKING_NAME_PLACEHOLDER, ''),
+			1)) {
+		return true;
+	} else {
+		return false;
+	}
 }
 
 /**
