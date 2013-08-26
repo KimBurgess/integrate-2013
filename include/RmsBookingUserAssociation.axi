@@ -34,10 +34,14 @@ define_function char extractUserDetails(RmsEventBookingResponse booking) {
 	stack_var integer end;
 	stack_var char name[64];
 
+	if (!bookingHasUserEmbedded(booking)) {
+		return false;
+	}
+
 	start = find_string(NFC_BOOKING_SUBJECT_EXTERNAL,
 			NFC_BOOKING_NAME_PLACEHOLDER,
 			1);
-	end = length_string(booking.subject) + 1 - 
+	end = length_string(booking.subject) + 1 -
 			find_string(string_reverse(NFC_BOOKING_SUBJECT_EXTERNAL),
 					string_reverse(NFC_BOOKING_NAME_PLACEHOLDER),
 					1);
@@ -45,14 +49,28 @@ define_function char extractUserDetails(RmsEventBookingResponse booking) {
 			start,
 			end - start + 1);
 
-	if (name == '') {
-		return false;
-	}
-
 	booking.organizer = name;
 	booking.subject = NFC_BOOKING_SUBJECT_INTERNAL;
 
 	return true;
+}
+
+/**
+ * Check to see if an RmsEventBookingResponse has embedded user details.
+ *
+ * @param	booking			the RmsEventBookingResponse to check
+ * @return					a boolean, true if there's something of interest
+ */
+define_function char bookingHasUserEmbedded(RmsEventBookingResponse booking) {
+	// FIXME This is a little hacky as it will break if we change the format of 
+	// NFC_BOOKING_SUBJECT_EXTERNAL however it will get us up and going for the
+	// show.
+	stack_var integer len;
+	
+	len = length_string(NFC_BOOKING_SUBJECT_EXTERNAL) -
+			length_string(NFC_BOOKING_NAME_PLACEHOLDER);
+
+	return right_string(NFC_BOOKING_SUBJECT_EXTERNAL, len) == right_string(booking.subject, len);
 }
 
 /**

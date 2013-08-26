@@ -40,7 +40,9 @@
 */
 MODULE_NAME='RmsPowerDistributionUnitMonitor'(DEV vdvRMS,
                                               DEV dvMonitoredDevice,
-                                              DEV dvPowerMonitoredAssets[])
+                                              DEV dvPowerMonitoredAssets[],
+											  char powerOutletNames[9][],
+											  char axLinkBusNames[3][])
 
 (***********************************************************)
 (* System Type : NetLinx                                   *)
@@ -113,28 +115,8 @@ CHAR MAX_AXLINK_BUS = 2;
 CHAR MAX_TEMPERATURE_READINGS = 10;
 
 // Define if this PDU is using a temperature sensor
-#WARN 'Define is the PDU is using a temperature sensor'
 #DEFINE HAS_TEMPERATURE_SENSOR
 VOLATILE CHAR temperatureSensorName[] = 'Temperature';
-
-// RMS setup friendly names for each outlet
-#WARN 'Define the power outlet names here ...'
-VOLATILE CHAR powerOutletNames[][11]  =  { 'Outlet 1',
-                                           'Outlet 2',
-                                           'Outlet 3',
-                                           'Outlet 4',
-                                           'Outlet 5',
-                                           'Outlet 6',
-                                           'Outlet 7',
-                                           'Outlet 8',
-                                           'All Outlets'};  // this last name is a special placeholder for ALL OUTLETS
-
-
-// RMS setup friendly names for each AxLink bus
-#WARN 'Define the AxLink bus names here ...'
-VOLATILE CHAR axLinkBusNames[][17]  =  { 'AxLink Bus 1',
-                                         'AxLink Bus 2',
-                                         'All AxLink Busses'};  // this last name is a special placeholder for ALL AXLINK BUSSES
 
 
 
