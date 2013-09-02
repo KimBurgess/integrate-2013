@@ -112,7 +112,7 @@ define_function authenticate(char uid[]) {
 	playSound(dvTpBase, 'valid-id.wav');
 
 	activeUser = userId;
-	
+
 	RmsSetDefaultEventBookingSubject(getAdHocBookingSubject(activeUser));
 	RmsSetDefaultEventBookingBody(getAdHocBookingDetails(activeUser));
 
@@ -145,7 +145,7 @@ define_function submitMaintenanceRequest(integer userId, char msg[]) {
 define_function NfcTagRead(integer tagType, char uid[], integer uidLength) {
 	if (!activeUser) {
 
-		// Check for an updated users.txt 
+		// Check for an updated users.txt
 		if (!getUserIdFromNfcUid(uid)) {
 			loadSystemUsersFromFile('users.txt');
 		}
@@ -188,13 +188,13 @@ data_event[dvTp] {
 
 		key = string_get_key(data.text, '-');
 		value = string_get_value(data.text, '-');
-		
+
 		select {
-			
+
 			active (key = MAINTENANCE_REQUEST_RETURN): {
 				submitMaintenanceRequest(activeUser, value);
 			}
-			
+
 		}
 	}
 

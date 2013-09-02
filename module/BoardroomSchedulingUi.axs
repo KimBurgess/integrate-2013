@@ -374,13 +374,13 @@ define_function createAdHocBooking(char startDate[10],
  */
 define_function restartAutoLogOutTimer() {
 	stack_var long times[1];
-	
+
 	times[1] = AUTO_LOGOUT_DELAY * 1000;
-	
+
 	if (timeline_active(AUTO_LOGOUT_TL)) {
 		timeline_kill(AUTO_LOGOUT_TL);
 	}
-	
+
 	timeline_create(AUTO_LOGOUT_TL, times, 1, TIMELINE_ABSOLUTE, TIMELINE_ONCE);
 }
 
@@ -453,7 +453,7 @@ define_function RmsEventSchedulingCreateResponse(char isDefaultLocation,
 				showPopupEx(dvTpBase, NFC_RESERVE_FAIL_VIEW_NAME, NFC_HOME_PAGE);
 			}
 		}
-		
+
 		if (eventBookingResponse.isSuccessful) {
 			// This need to be handled seperately to allow the functionality
 			// provided by the stock UI to also shoot of confirmation emails.
@@ -481,11 +481,11 @@ define_function RmsEventSchedulingCreateResponse(char isDefaultLocation,
 define_function NfcTagRead(integer tagType, char uid[], integer uidLength) {
 	if (!activeUser) {
 
-		// Check for an updated users.txt 
+		// Check for an updated users.txt
 		if (!getUserIdFromNfcUid(uid)) {
 			loadSystemUsersFromFile('users.txt');
 		}
-	
+
 		authenticate(uid);
 	}
 }

@@ -62,7 +62,7 @@ define_function char extractUserDetails(RmsEventBookingResponse booking) {
  * @return					a boolean, true if there's something of interest
  */
 define_function char bookingHasUserEmbedded(RmsEventBookingResponse booking) {
-	// FIXME This is a little hacky as it will break if we change the format of 
+	// FIXME This is a little hacky as it will break if we change the format of
 	// NFC_BOOKING_SUBJECT_EXTERNAL however it will get us up and going for the
 	// show.
 	if (find_string(booking.subject,
