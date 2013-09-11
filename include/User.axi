@@ -1,3 +1,9 @@
+/**
+ * This  serves as an offline replacement for a fully fledged user database.
+ * Users will be loaded from a csv file that has been FTP'd to the master. In
+ * real world environments it is recommended that LDAP be utilized to query
+ * this data from an existing repository.
+ */
 PROGRAM_NAME='User'
 
 
