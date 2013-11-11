@@ -1,0 +1,375 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE Workspace [
+
+<!-- Common Elements -->
+<!ELEMENT Identifier (#PCDATA)>
+<!ELEMENT Comments (#PCDATA)>
+<!ELEMENT CreationDate (#PCDATA)>
+
+<!-- Workspace Elements-->
+<!ELEMENT Workspace ( Identifier,
+               CreateVersion,
+               PJS_File?,
+               PJS_ConvertDate?,
+               PJS_CreateDate?,
+               Comments?,
+               Project*)>
+
+<!ATTLIST Workspace 
+      CurrentVersion CDATA   #REQUIRED> 
+
+<!ELEMENT CreateVersion     (#PCDATA)>
+
+
+<!-- Conversion data only: only included for files converted from the old .pjs database -->
+<!ELEMENT PJS_File (#PCDATA)>
+<!ELEMENT PJS_ConvertDate (#PCDATA)>
+<!ELEMENT PJS_CreateDate (#PCDATA)>
+
+<!ELEMENT Project ( Identifier,
+               Designer?,
+               DealerID?,
+               SalesOrder?,
+               PurchaseOrder?,
+               Comments?,
+               System*)>
+
+<!ELEMENT Designer (#PCDATA)>
+<!ELEMENT DealerID (#PCDATA)>
+<!ELEMENT SalesOrder (#PCDATA)>
+<!ELEMENT PurchaseOrder (#PCDATA)>
+
+
+<!ELEMENT System  (  Identifier,
+                 SysID,
+                 TransSerial?,
+                 TransModem?,
+                 TransTCPIP?,
+                 VirtualNetLinxMasterFlag?,
+                 VNMRestoreIPSettings?,
+                 VNMSystemID?,
+                 VNMIPAddress?,
+                 VNMMaskAddress?,
+                 IsAuthenticationEnabled?,
+                 UserName?,
+                 Password?,
+                 Comments?,
+                 File*)>
+
+<!ATTLIST System
+      IsActive   (true | false)   "false"
+      Platform   (Axcess | Netlinx)   "Axcess"
+      Transport   (Serial | Modem | TCPIP) "Serial">
+
+<!ELEMENT SysID (#PCDATA)>
+<!ELEMENT TransSerial (#PCDATA)>
+<!ELEMENT TransModem (#PCDATA)>
+<!ELEMENT TransTCPIP (#PCDATA)>
+<!ELEMENT VirtualNetLinxMasterFlag (#PCDATA)>
+<!ELEMENT VNMRestoreIPSettings (#PCDATA)>
+<!ELEMENT VNMSystemID (#PCDATA)>
+<!ELEMENT VNMIPAddress (#PCDATA)>
+<!ELEMENT VNMMaskAddress (#PCDATA)>
+<!ELEMENT IsAuthenticationEnabled (#PCDATA)>
+<!ELEMENT UserName (#PCDATA)>
+<!ELEMENT Password (#PCDATA)>
+
+
+<!ELEMENT File ( Identifier,
+               FilePathName,
+               Comments?,
+               DeviceMap*,
+               IRDB*)>
+
+<!ATTLIST File 
+       Type (Source | MasterSrc | Include | Module | AXB | IR | TPD | TP4 | KPD | TKO | AMX_IR_DB | IRN_DB | Other | DUET | TOK | TKN | KPB ) "Other"
+       CompileType (Axcess | Netlinx | None) "None"> 
+
+<!ELEMENT FilePathName	(#PCDATA)>
+                            
+<!ELEMENT DeviceMap (DevName)>
+       <!ATTLIST DeviceMap DevAddr CDATA #REQUIRED>
+
+       <!ELEMENT DevName (#PCDATA)>
+
+<!ELEMENT IRDB    (Property,
+                 DOSName,
+                 UserDBPathName,
+                 Notes)>
+       <!ATTLIST IRDB DBKey CDATA #REQUIRED>
+
+       <!ELEMENT Property (#PCDATA)>
+       <!ELEMENT DOSName (#PCDATA)>
+       <!ELEMENT UserDBPathName (#PCDATA)>
+       <!ELEMENT Notes (#PCDATA)>
+]>
+
+<Workspace CurrentVersion="3.3"><Identifier>Integrate 2013</Identifier>
+<CreateVersion>3.3</CreateVersion>
+<PJS_File></PJS_File>
+<PJS_ConvertDate></PJS_ConvertDate>
+<PJS_CreateDate></PJS_CreateDate>
+<Comments></Comments>
+<Project><Identifier>Pod 5 - Boardroom</Identifier>
+<Designer></Designer>
+<DealerID></DealerID>
+<SalesOrder></SalesOrder>
+<PurchaseOrder></PurchaseOrder>
+<Comments></Comments>
+<System IsActive="true" Platform="Netlinx" Transport="TCPIP"><Identifier>DVX-3155HD-SP</Identifier>
+<SysID>5</SysID>
+<TransSerial>COM4,38400,8,None,1,None,,</TransSerial>
+<TransModem>COM1,38400,8,None,1,None</TransModem>
+<TransTCPIP>192.168.4.90:1319:1: ::</TransTCPIP>
+<VirtualNetLinxMasterFlag>0</VirtualNetLinxMasterFlag>
+<VNMRestoreIPSettings>192.168.24.101:1319:1: DGX::</VNMRestoreIPSettings>
+<VNMSystemID>1</VNMSystemID>
+<VNMIPAddress>192.168.24.100</VNMIPAddress>
+<VNMMaskAddress>255.255.255.0</VNMMaskAddress>
+<IsAuthenticationEnabled>0</IsAuthenticationEnabled>
+<UserName></UserName>
+<Password></Password>
+<Comments></Comments>
+<File CompileType="None" Type="DUET"><Identifier>AMX_DIGITAL_TV_SERVER_dr1_0_0</Identifier>
+<FilePathName>src\AMX_DIGITAL_TV_SERVER_dr1_0_0.jar</FilePathName>
+<Comments></Comments>
+</File>
+<File CompileType="Netlinx" Type="Module"><Identifier>BoardroomSchedulingUi</Identifier>
+<FilePathName>src\BoardroomSchedulingUi.axs</FilePathName>
+<Comments></Comments>
+</File>
+<File CompileType="None" Type="TKO"><Identifier>CBus_Comm</Identifier>
+<FilePathName>src\CBus_Comm.tko</FilePathName>
+<Comments></Comments>
+</File>
+<File CompileType="None" Type="DUET"><Identifier>Clipsal_CBus_Comm_dr1_0_0</Identifier>
+<FilePathName>src\Clipsal_CBus_Comm_dr1_0_0.jar</FilePathName>
+<Comments></Comments>
+</File>
+<File CompileType="None" Type="Include"><Identifier>DvxApi</Identifier>
+<FilePathName>src\DvxApi.axi</FilePathName>
+<Comments></Comments>
+</File>
+<File CompileType="None" Type="Include"><Identifier>DvxControl</Identifier>
+<FilePathName>src\DvxControl.axi</FilePathName>
+<Comments></Comments>
+</File>
+<File CompileType="None" Type="Include"><Identifier>DvxListener</Identifier>
+<FilePathName>src\DvxListener.axi</FilePathName>
+<Comments></Comments>
+</File>
+<File CompileType="None" Type="Include"><Identifier>EnzoControl</Identifier>
+<FilePathName>src\EnzoControl.axi</FilePathName>
+<Comments></Comments>
+</File>
+<File CompileType="None" Type="Include"><Identifier>EnzoVirtualKeypad</Identifier>
+<FilePathName>src\EnzoVirtualKeypad.axi</FilePathName>
+<Comments></Comments>
+</File>
+<File CompileType="Netlinx" Type="MasterSrc"><Identifier>Integrate 2013 Boardroom</Identifier>
+<FilePathName>src\Integrate 2013 Boardroom.axs</FilePathName>
+<Comments></Comments>
+</File>
+<File CompileType="None" Type="Include"><Identifier>LightingControl</Identifier>
+<FilePathName>src\LightingControl.axi</FilePathName>
+<Comments></Comments>
+</File>
+<File CompileType="None" Type="Include"><Identifier>ModeroControl</Identifier>
+<FilePathName>src\ModeroControl.axi</FilePathName>
+<Comments></Comments>
+</File>
+<File CompileType="None" Type="Include"><Identifier>ModeroListener</Identifier>
+<FilePathName>src\ModeroListener.axi</FilePathName>
+<Comments></Comments>
+</File>
+<File CompileType="None" Type="Include"><Identifier>MplControl</Identifier>
+<FilePathName>src\MplControl.axi</FilePathName>
+<Comments></Comments>
+</File>
+<File CompileType="None" Type="Include"><Identifier>MplDvxTp</Identifier>
+<FilePathName>src\MplDvxTp.axi</FilePathName>
+<Comments></Comments>
+</File>
+<File CompileType="None" Type="Include"><Identifier>string</Identifier>
+<FilePathName>src\NCL\string.axi</FilePathName>
+<Comments></Comments>
+</File>
+<File CompileType="None" Type="DUET"><Identifier>NEC_NPPA600X_Comm_dr1_0_0</Identifier>
+<FilePathName>src\NEC_NPPA600X_Comm_dr1_0_0.jar</FilePathName>
+<Comments></Comments>
+</File>
+<File CompileType="None" Type="DUET"><Identifier>NEC_P402_Comm_dr1_0_0</Identifier>
+<FilePathName>src\NEC_P402_Comm_dr1_0_0.jar</FilePathName>
+<Comments></Comments>
+</File>
+<File CompileType="None" Type="Include"><Identifier>NecMonitorControl</Identifier>
+<FilePathName>src\NecMonitorControl.axi</FilePathName>
+<Comments></Comments>
+</File>
+<File CompileType="None" Type="Include"><Identifier>NecV551MonitorControl</Identifier>
+<FilePathName>src\NecV551MonitorControl.axi</FilePathName>
+<Comments></Comments>
+</File>
+<File CompileType="None" Type="Include"><Identifier>NfcListener</Identifier>
+<FilePathName>src\NfcListener.axi</FilePathName>
+<Comments></Comments>
+</File>
+<File CompileType="None" Type="Include"><Identifier>RmsApi</Identifier>
+<FilePathName>src\RmsApi.axi</FilePathName>
+<Comments></Comments>
+</File>
+<File CompileType="None" Type="Include"><Identifier>RmsApiAux</Identifier>
+<FilePathName>src\RmsApiAux.axi</FilePathName>
+<Comments></Comments>
+</File>
+<File CompileType="None" Type="Include"><Identifier>RmsBookingUserAssociation</Identifier>
+<FilePathName>src\RmsBookingUserAssociation.axi</FilePathName>
+<Comments></Comments>
+</File>
+<File CompileType="None" Type="DUET"><Identifier>RmsClientGui_dr4_0_0</Identifier>
+<FilePathName>src\RmsClientGui_dr4_0_0.jar</FilePathName>
+<Comments></Comments>
+</File>
+<File CompileType="Netlinx" Type="Module"><Identifier>RmsControlSystemMonitor</Identifier>
+<FilePathName>src\RmsControlSystemMonitor.axs</FilePathName>
+<Comments></Comments>
+</File>
+<File CompileType="Netlinx" Type="Module"><Identifier>RmsDuetMonitorMonitor</Identifier>
+<FilePathName>src\RmsDuetMonitorMonitor.axs</FilePathName>
+<Comments></Comments>
+</File>
+<File CompileType="Netlinx" Type="Module"><Identifier>RmsDvxSwitcherMonitor</Identifier>
+<FilePathName>src\RmsDvxSwitcherMonitor.axs</FilePathName>
+<Comments></Comments>
+</File>
+<File CompileType="None" Type="Include"><Identifier>RmsEventListener</Identifier>
+<FilePathName>src\RmsEventListener.axi</FilePathName>
+<Comments></Comments>
+</File>
+<File CompileType="Netlinx" Type="Module"><Identifier>RmsGenericNetLinxDeviceMonitor</Identifier>
+<FilePathName>src\RmsGenericNetLinxDeviceMonitor.axs</FilePathName>
+<Comments></Comments>
+</File>
+<File CompileType="None" Type="Include"><Identifier>RmsGuiApi</Identifier>
+<FilePathName>src\RmsGuiApi.axi</FilePathName>
+<Comments></Comments>
+</File>
+<File CompileType="Netlinx" Type="Module"><Identifier>RmsHeartAttack</Identifier>
+<FilePathName>src\RmsHeartAttack.axs</FilePathName>
+<Comments></Comments>
+</File>
+<File CompileType="None" Type="Include"><Identifier>RMSMain</Identifier>
+<FilePathName>src\RMSMain.axi</FilePathName>
+<Comments></Comments>
+</File>
+<File CompileType="None" Type="Include"><Identifier>RmsMathUtil</Identifier>
+<FilePathName>src\RmsMathUtil.axi</FilePathName>
+<Comments></Comments>
+</File>
+<File CompileType="None" Type="Include"><Identifier>RmsMonitorCommon</Identifier>
+<FilePathName>src\RmsMonitorCommon.axi</FilePathName>
+<Comments></Comments>
+</File>
+<File CompileType="None" Type="DUET"><Identifier>RmsNetLinxAdapter_dr4_0_0</Identifier>
+<FilePathName>src\RmsNetLinxAdapter_dr4_0_0.jar</FilePathName>
+<Comments></Comments>
+</File>
+<File CompileType="None" Type="Include"><Identifier>RmsNlSnapiComponents</Identifier>
+<FilePathName>src\RmsNlSnapiComponents.axi</FilePathName>
+<Comments></Comments>
+</File>
+<File CompileType="None" Type="Include"><Identifier>RmsNlTimer</Identifier>
+<FilePathName>src\RmsNlTimer.axi</FilePathName>
+<Comments></Comments>
+</File>
+<File CompileType="Netlinx" Type="Module"><Identifier>RmsPowerDistributionUnitMonitor</Identifier>
+<FilePathName>src\RmsPowerDistributionUnitMonitor.axs</FilePathName>
+<Comments></Comments>
+</File>
+<File CompileType="Netlinx" Type="Module"><Identifier>RmsPowerDistributionUnitMonitor_Custom</Identifier>
+<FilePathName>src\RmsPowerDistributionUnitMonitor_Custom.axs</FilePathName>
+<Comments></Comments>
+</File>
+<File CompileType="None" Type="Include"><Identifier>RmsSchedulingApi</Identifier>
+<FilePathName>src\RmsSchedulingApi.axi</FilePathName>
+<Comments></Comments>
+</File>
+<File CompileType="None" Type="Include"><Identifier>RmsSchedulingEventListener</Identifier>
+<FilePathName>src\RmsSchedulingEventListener.axi</FilePathName>
+<Comments></Comments>
+</File>
+<File CompileType="None" Type="Include"><Identifier>RmsSourceUsage</Identifier>
+<FilePathName>src\RmsSourceUsage.axi</FilePathName>
+<Comments></Comments>
+</File>
+<File CompileType="Netlinx" Type="Module"><Identifier>RmsSourceUsageMonitor</Identifier>
+<FilePathName>src\RmsSourceUsageMonitor.axs</FilePathName>
+<Comments></Comments>
+</File>
+<File CompileType="None" Type="Include"><Identifier>RmsSystemEventHandler</Identifier>
+<FilePathName>src\RmsSystemEventHandler.axi</FilePathName>
+<Comments></Comments>
+</File>
+<File CompileType="Netlinx" Type="Module"><Identifier>RmsSystemPowerMonitor</Identifier>
+<FilePathName>src\RmsSystemPowerMonitor.axs</FilePathName>
+<Comments></Comments>
+</File>
+<File CompileType="Netlinx" Type="Module"><Identifier>RmsTouchPanelMonitor</Identifier>
+<FilePathName>src\RmsTouchPanelMonitor.axs</FilePathName>
+<Comments></Comments>
+</File>
+<File CompileType="Netlinx" Type="Module"><Identifier>RmsVirtualDeviceMonitor</Identifier>
+<FilePathName>src\RmsVirtualDeviceMonitor.axs</FilePathName>
+<Comments></Comments>
+</File>
+<File CompileType="None" Type="IR"><Identifier>sony0557</Identifier>
+<FilePathName>src\sony0557.irl</FilePathName>
+<Comments></Comments>
+<DeviceMap DevAddr="dvIrBluray"><DevName>dvIrBluray</DevName>
+</DeviceMap>
+</File>
+<File CompileType="None" Type="DUET"><Identifier>Sony_EVID100_Comm_dr1_0_0</Identifier>
+<FilePathName>src\Sony_EVID100_Comm_dr1_0_0.jar</FilePathName>
+<Comments></Comments>
+</File>
+<File CompileType="None" Type="Include"><Identifier>SonyEvid100CameraControl</Identifier>
+<FilePathName>src\SonyEvid100CameraControl.axi</FilePathName>
+<Comments></Comments>
+</File>
+<File CompileType="None" Type="Include"><Identifier>SourceSelectDragAndDrop</Identifier>
+<FilePathName>src\SourceSelectDragAndDrop.axi</FilePathName>
+<Comments></Comments>
+</File>
+<File CompileType="None" Type="Include"><Identifier>SystemConfigure</Identifier>
+<FilePathName>src\SystemConfigure.axi</FilePathName>
+<Comments></Comments>
+</File>
+<File CompileType="None" Type="Include"><Identifier>Testing</Identifier>
+<FilePathName>src\Testing.axi</FilePathName>
+<Comments></Comments>
+</File>
+<File CompileType="None" Type="Include"><Identifier>TimeUtil</Identifier>
+<FilePathName>src\TimeUtil.axi</FilePathName>
+<Comments></Comments>
+</File>
+<File CompileType="None" Type="Include"><Identifier>TvControl</Identifier>
+<FilePathName>src\TvControl.axi</FilePathName>
+<Comments></Comments>
+</File>
+<File CompileType="None" Type="Include"><Identifier>User</Identifier>
+<FilePathName>src\User.axi</FilePathName>
+<Comments></Comments>
+</File>
+<File CompileType="None" Type="Other"><Identifier>TDS Interface V1.0.14</Identifier>
+<FilePathName>TDS Interface V1.0.14.doc</FilePathName>
+<Comments></Comments>
+</File>
+<File CompileType="None" Type="TP4"><Identifier>Integrate Boardroom MXT-1900</Identifier>
+<FilePathName>touch-panels\Integrate Boardroom MXT-1900.TP4</FilePathName>
+<Comments></Comments>
+<DeviceMap DevAddr="dvTpBoardroomTableMain"><DevName>dvTpBoardroomTableMain</DevName>
+</DeviceMap>
+</File>
+</System>
+</Project>
+</Workspace>

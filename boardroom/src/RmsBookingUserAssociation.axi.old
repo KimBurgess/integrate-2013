@@ -1,0 +1,88 @@
+PROGRAM_NAME='RmsBookingUserAssociation'
+
+
+#IF_NOT_DEFINED __RMS_BOOKING_USER_ASSOCIATION__
+#DEFINE __RMS_BOOKING_USER_ASSOCIATION__
+
+
+#INCLUDE 'User'
+#INCLUDE 'string'
+#INCLUDE 'RmsSchedulingApi'
+
+
+define_variable
+
+constant char NFC_BOOKING_NAME_PLACEHOLDER[] = '<name>';
+constant char NFC_BOOKING_DESCRIPTION_EXTERNAL[] = 'Ad-hoc meeting created by <name> from touch panel booking system.';
+constant char NFC_BOOKING_DESCRIPTION_INTERNAL[] = 'Ad-hoc meeting created from touch panel booking system.';
+
+
+
+/**
+ * Extract the addition RMS user information that is iserted into a booking
+ * description for reservations made with an NFC card.
+ *
+ * WARNING: as RMS cannot return type this function has a side effect on the
+ * passed booking object.
+ *
+ * @param	booking			an RmsEventBookingResponse containing the booking
+ *							data
+ * @return					a boolean, true if a user was extracted
+ */
+define_function char extractUserDetails(RmsEventBookingResponse booking) {
+	stack_var char left[256];
+	stack_var char right[256];
+	stack_var char name[64];
+
+	left = string_get_key(NFC_BOOKING_DESCRIPTION_EXTERNAL,
+			NFC_BOOKING_NAME_PLACEHOLDER);
+	right = string_get_value(NFC_BOOKING_DESCRIPTION_EXTERNAL,
+			NFC_BOOKING_NAME_PLACEHOLDER);
+	name = string_get_between(booking.details, left, right);
+
+	if (name == '') {
+		return false;
+	}
+
+	booking.organizer = name;
+	booking.details = NFC_BOOKING_DESCRIPTION_INTERNAL;
+
+	return true;
+}
+
+/**
+ * Insert parsable (and human readable) user details into a meeting details
+ * string.
+ *
+ * @param	details			the existing meeting details string
+ * @param	userId			the internal userId
+ * @return					an updated details string that can be used when
+ *							creating a booking to enable the associated user
+ *							to be identified
+ */
+define_function char[1024] insertUserDetails(char details[], integer userId) {
+	stack_var char CRLF[2];
+	stack_var char left[256];
+	stack_var char right[256];
+	stack_var char ret[1024];
+
+	if (!userExists(userId)) {
+		return details;
+	}
+
+	CRLF = "$0A, $0D";
+	left = string_get_key(NFC_BOOKING_DESCRIPTION_EXTERNAL,
+			NFC_BOOKING_NAME_PLACEHOLDER);
+	right = string_get_value(NFC_BOOKING_DESCRIPTION_EXTERNAL,
+			NFC_BOOKING_NAME_PLACEHOLDER);
+
+	if (trim(details) != '') {
+		ret = "details, CRLF, CRLF, left, getUserName(userId), right";
+	} else {
+		ret = "left, getUserName(userId), right";
+	}
+
+	return ret;
+}
+
+#END_IF // __RMS_BOOKING_USER_ASSOCIATION__
