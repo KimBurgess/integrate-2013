@@ -10,3 +10,9 @@
 [submodule "lib/RMS"]
 	path = lib/RMS
 	url = https://github.com/KimBurgess/rms-sdk.git
+[submodule "lib/DVX"]
+	path = lib/DVX
+	url = https://github.com/DavidVine/netlinx-dvx-api.git
+[submodule "lib/Modero"]
+	path = lib/Modero
+	url = https://github.com/DavidVine/netlinx-modero-api.git
